@@ -7,6 +7,15 @@ revision = require './revision'
 addToJournal = require './addToJournal'
 newPage = require('./page').newPage
 
+ndnIO = require("ndn-io")
+
+remoteNFD =
+  host: location.host.split(":")[0],
+  port: 6565
+
+ndnIO.remoteTangle remoteNFD, ->
+                              console.log("connected to remote nfd")
+
 module.exports = pageHandler = {}
 
 pageFromLocalStorage = (slug)->
@@ -16,65 +25,21 @@ pageFromLocalStorage = (slug)->
     undefined
 
 recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
+
+  gotten = false
+
   {slug,rev,site} = pageInformation
 
-  if site
-    localContext = []
-  else
-    site = localContext.shift()
+  fetchParams =
+    uri: "wiki/page/" + slug,
+    type: "object"
 
-  site = 'origin' if site is window.location.host
-  site = null if site=='view'
+  onData = (name, thing) ->
+    whenGotten newPage thing, site
 
-  if site?
-    if site == 'local'
-      if localPage = pageFromLocalStorage(pageInformation.slug)
-        #NEWPAGE local from pageHandler.get 
-        return whenGotten newPage(localPage, 'local' )
-      else
-        return whenNotGotten()
-    else
-      if site == 'origin'
-        url = "/#{slug}.json"
-      else
-        url = "http://#{site}/#{slug}.json"
-  else
-    url = "/#{slug}.json"
+  ndnIO.fetch(fetchParams, onData, whenNotGotten)
 
-  $.ajax
-    type: 'GET'
-    dataType: 'json'
-    url: url + "?random=#{util.randomBytes(4)}"
-    success: (page) ->
-      page = revision.create rev, page if rev
-      #NEWPAGE server from pageHandler.get
-      return whenGotten newPage(page, site)
-    error: (xhr, type, msg) ->
-      if (xhr.status != 404) and (xhr.status != 0)
-        wiki.log 'pageHandler.get error', xhr, xhr.status, type, msg
-        #NEWPAGE trouble from PageHandler.get
-        troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
-        troublePageObject.addParagraph """
-The page handler has run into problems with this   request.
-<pre class=error>#{JSON.stringify pageInformation}</pre>
-The requested url.
-<pre class=error>#{url}</pre>
-The server reported status.
-<pre class=error>#{xhr.status}</pre>
-The error type.
-<pre class=error>#{type}</pre>
-The error message.
-<pre class=error>#{msg}</pre>
-These problems are rarely solved by reporting issues.
-There could be additional information reported in the browser's console.log.
-More information might be accessible by fetching the page outside of wiki.
-<a href="#{url}" target="_blank">try-now</a>
-"""
-        return whenGotten troublePageObject
-      if localContext.length > 0
-        recursiveGet( {pageInformation, whenGotten, whenNotGotten, localContext} )
-      else
-        whenNotGotten()
+
 
 pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 

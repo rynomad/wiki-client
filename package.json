@@ -25,7 +25,8 @@
     }
   ],
   "dependencies": {
-    "underscore": "*"
+    "underscore": "*",
+    "ndn-io": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
