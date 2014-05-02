@@ -30,14 +30,36 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
 
   {slug,rev,site} = pageInformation
 
+  journalNum = 0
+  triggered = false
+
   fetchParams =
-    uri: "wiki/page/" + slug,
+    uri: "wiki/page/" + slug + '/' + journalNum,
     type: "object"
 
-  onData = (name, thing) ->
-    whenGotten newPage thing, site
+  data =
+    journal: []
 
-  ndnIO.fetch(fetchParams, onData, whenNotGotten)
+  onTimeout = (name) ->
+    console.log(journalNum, "timeout triggered")
+    if journalNum == 0
+      whenNotGotten()
+      triggered == true
+    else
+      whenGotten newPage revision.create journalNum, data
+
+
+  onData = (name, thing) ->
+    journalNum++
+    fetchParams.uri = "wiki/page/" + slug + '/' + journalNum
+    data.journal.push(thing)
+    if (thing.item && thing.item.title)
+      data.title = thing.item.title
+
+
+    ndnIO.fetch(fetchParams, onData, onTimeout)
+
+  ndnIO.fetch(fetchParams, onData, onTimeout)
 
 
 
