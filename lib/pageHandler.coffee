@@ -13,10 +13,10 @@ random = require './random'
 ndnIO = require("ndn-io")
 
 remoteNFD =
-  host: location.host.split(":")[0],
-  port: 6565
+  hashname: 'aba12fd25802c6efe091d33c323804929f08dde23bcf3650b8ce1eb5a50a5a88',
 
-ndnIO.remoteTangle remoteNFD, ->
+
+ndnIO.telehashTangle remoteNFD, ->
                               console.log("connected to remote nfd")
 
 module.exports = pageHandler = {}
