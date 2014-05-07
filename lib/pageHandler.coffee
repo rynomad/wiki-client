@@ -12,17 +12,11 @@ random = require './random'
 
 ndnIO = require("ndn-io")
 
-falsyloc =
-  host: "something:"
-
-location = location || falsyloc
-
 remoteNFD =
-  host: location.host.split(":")[0],
-  port: 6565
+  falsey: "stuff",
 
-
-ndnIO.initFace "websocket", remoteNFD, ->
+console.log ndnIO
+ndnIO.remoteTangle  remoteNFD, ->
                               console.log("connected to remote nfd")
 
 module.exports = pageHandler = {}
