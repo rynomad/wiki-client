@@ -12,6 +12,11 @@ random = require './random'
 
 ndnIO = require("ndn-io")
 
+falsyloc =
+  host: "something:"
+
+location = location || falsyloc
+
 remoteNFD =
   host: location.host.split(":")[0],
   port: 6565
