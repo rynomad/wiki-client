@@ -13,7 +13,7 @@ random = require './random'
 ndnIO = require("ndn-io")
 
 remoteNFD =
-  falsey: "stuff",
+  host: "localhost"
 
 console.log ndnIO
 ndnIO.remoteTangle  remoteNFD, ->
@@ -101,18 +101,30 @@ pushToLocal = ($page, pagePutInfo, action) ->
   localStorage[pagePutInfo.slug] = JSON.stringify(page)
   addToJournal $page.find('.journal'), action
 
+
 pushToServer = ($page, pagePutInfo, action) ->
-  $.ajax
-    type: 'PUT'
-    url: "/page/#{pagePutInfo.slug}/action"
-    data:
-      'action': JSON.stringify(action)
-    success: () ->
-      addToJournal $page.find('.journal'), action
-      if action.type == 'fork' # push
-        localStorage.removeItem $page.attr('id')
-    error: (xhr, type, msg) ->
-      console.log "pageHandler.put ajax error callback", type, msg
+
+  journalnum = $page.data("data").journal.length
+  console.log journalnum,
+  action.page = undefined
+  publishOptions =
+    uri: "wiki/page/" + pagePutInfo.slug + "/" + journalnum ,
+    freshness: 60 * 60 * 1000 ,
+    type: 'object',
+    thing: action
+
+  $page.data("data").journal = $page.data("data").journal.concat(action)
+  addToJournal $page.find('.journal'), action
+
+  cb = (success) ->
+    if success is true
+      console.log("publish action success")
+
+    else
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!publish action fail!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      ndnIO.publish publishOptions , cb
+
+  ndnIO.publish publishOptions , cb
 
 pageHandler.put = ($page, action) ->
 
