@@ -28,6 +28,12 @@ pageModule = require('./page')
 newPage = pageModule.newPage
 asSlug = pageModule.asSlug
 
+getIO = () ->
+  if pageHandler.io != null
+    plugin.useIO pageHandler.io
+  else
+    setTimeout getIO, 500
+
 
 getItem = ($item) ->
   $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
@@ -209,9 +215,13 @@ renderPageIntoPageElement = (pageObject, $page) ->
 
 createMissingFlag = ($page, pageObject) ->
   unless pageObject.isRemote()
-    $('img.favicon',$page).error ->
-      plugin.get 'favicon', (favicon) ->
-        favicon.create()
+    recursor = () ->
+      if plugin.io
+        $('img.favicon',$page).error ->
+          plugin.get 'favicon-alt', (favicon) ->
+            favicon.create()
+      else
+        setTimeout recursor, 500
 
 rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()
@@ -279,7 +289,7 @@ cycle = ->
 
   whenGotten = (pageObject) ->
     buildPage( pageObject, $page )
-    for site in pageObject.getNeighbors(location.host)
+    for site in pageObject.getNeighbors($(".local").data().hashname)
       neighborhood.registerNeighbor site
 
   pageHandler.get

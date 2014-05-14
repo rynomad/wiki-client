@@ -9,12 +9,12 @@ sites = null
 totalPages = 0
 
 
-flag = (site) ->
+flag = (site, uri) ->
   # status class progression: .wait, .fetch, .fail or .done
   """
     <span class="neighbor" data-site="#{site}">
       <div class="wait">
-        <img src="http://#{site}/favicon.png" title="#{site}">
+        <img src="#{uri}" title="#{site}">
       </div>
     </span>
   """
@@ -26,7 +26,7 @@ bind = ->
   $neighborhood = $('.neighborhood')
   $('body')
     .on 'new-neighbor', (e, site) ->
-      $neighborhood.append flag site
+      $neighborhood.append flag site, uri
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')

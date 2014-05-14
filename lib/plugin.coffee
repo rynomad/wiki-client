@@ -2,24 +2,39 @@
 # javascript including additional scripts that may be requested.
 
 module.exports = plugin = {}
-
+ndnIO = null
 # define cachedScript that allows fetching a cached script.
-# see example in http://api.jquery.com/jQuery.getScript/ 
+# see example in http://api.jquery.com/jQuery.getScript/
+plugin.useIO = (io) ->
+  ndnIO = io
+  plugin.io = io
 
-cachedScript = (url, options) ->
-  options = $.extend(options or {},
-    dataType: "script"
-    cache: true
-    url: url
-  )
-  $.ajax options
+cachedScript = (pluginName, options) ->
+  pluginParams =
+    uri: "wiki/plugin/#{pluginName}"
+    type: "file"
+
+
+  onData = (reqUri, script, actualUri) ->
+    url = window.URL.createObjectUrl(script)
+    options = $.extend(options or {},
+      dataType: "script"
+      cache: true
+      url: url
+    )
+    $.ajax options
+
+  onTimeout = (uri) ->
+    console.log "plugin fetch timeout"
+
+  ndnIO.fetch pluginParams, onData, onTimeout
 
 scripts = []
 getScript = plugin.getScript = (url, callback = () ->) ->
   # console.log "URL :", url, "\nCallback :", callback
   if url in scripts
     callback()
-  else 
+  else
     cachedScript(url)
       .done ->
         scripts.push url

@@ -9,6 +9,8 @@ revision = require './revision'
 addToJournal = require './addToJournal'
 newPage = require('./page').newPage
 random = require './random'
+neighborhood = require "./neighborhood"
+synopsis = require "./synopsis"
 
 ndnIO = require("ndn-io")
 
@@ -16,8 +18,10 @@ remoteNFD =
   host: "localhost"
 
 console.log ndnIO
-ndnIO.remoteTangle  remoteNFD, ->
-                              console.log("connected to remote nfd")
+ndnIO.remoteTangle  remoteNFD, () ->
+  console.log("connected to remote nfd")
+  neighborhood.useIO(ndnIO)
+  pageHandler.io = ndnIO
 
 module.exports = pageHandler = {}
 
@@ -138,7 +142,7 @@ pushToLocal = ($page, pagePutInfo, action) ->
 
 
 pushToServer = ($page, pagePutInfo, action) ->
-  console.log("pushToServer", action)
+  console.log("pushToServer", neighborhood.sites[pageHandler.id()])
   if action.type == 'create'
     action.item.site = pageHandler.id()
   else
@@ -178,6 +182,32 @@ pushToServer = ($page, pagePutInfo, action) ->
   cb = (success) ->
     if success is true
       console.log("publish action success")
+      if ((action.type is "create" or "fork") or (publishImplicitFork?))
+        sitemapUpdate =
+          synopsis : synopsis $page.data("data"),
+          date : $page.data("data").journal[$page.data("data").journal.length - 1].date,
+          slug : pagePutInfo.slug,
+          title: $page.data("data").title
+
+        updateParams =
+          type: "object",
+          thing: sitemapUpdate
+
+        mapped = false
+        sitemap = neighborhood.sites[pageHandler.id()].sitemap
+        i = 0
+        for entry in sitemap
+          if entry.slug == pagePutInfo.slug
+            mapped = true
+            updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{i}"
+          i++
+
+        if mapped == false
+          console.log sitemap, sitemap.length
+          updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{sitemap.length}"
+
+        ndnIO.publish  updateParams, (s) ->
+          console.log s, "did we update the sitemap???"
 
     else
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!publish action fail!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

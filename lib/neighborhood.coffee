@@ -3,14 +3,19 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
-ndnIO = require "ndn-io"
+ndnIO = null
+
 module.exports = neighborhood = {}
 
 neighborhood.sites = {}
 nextAvailableFetch = 0
 nextFetchInterval = 2000
 
+neighborhood.useIO = (io) ->
+  ndnIO = io
+
 populateSiteInfoFor = (site,neighborInfo)->
+  console.log("POPULATESITEINFOFOR", site, neighborInfo)
   return if neighborInfo.sitemapRequestInflight
   neighborInfo.sitemapRequestInflight = true
 
@@ -39,52 +44,47 @@ populateSiteInfoFor = (site,neighborInfo)->
       ndnIO.fetch(sitemapParam, onData, onTimeout )
 
     onTimeout = (uri ) ->
-      if sitemapNum == 0
-        transition site, 'fetch', 'fail'
-      else
-        neighborInfo.sitemap = data
-        transition site, 'fetch', 'done'
-        $('body').trigger 'new-neighbor-done', site
-        sitemapParam =
+      sitemapParam =
           uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
           type: "object",
           selectors:
             interestLifetime: 60000
 
-
-        ndnIO.fetch(sitemapParam, onData, onTimeout)
-
-    ndnIO.fetch(sitemapParam, )
-
-
-    request = $.ajax
-      type: 'GET'
-      dataType: 'json'
-      url: sitemapUrl
-    request
-      .always( -> neighborInfo.sitemapRequestInflight = false )
-      .done (data)->
-        neighborInfo.sitemap = data
+      if sitemapNum == 0
+        transition site, 'fetch', 'fail'
+        transition site, 'wait', 'fail'
+      else
+        transition site, "wait", "done"
+        neighborInfo.sitemap = sitemap
         transition site, 'fetch', 'done'
         $('body').trigger 'new-neighbor-done', site
-      .fail (data)->
-        transition site, 'fetch', 'fail'
 
-  now = Date.now()
-  if now > nextAvailableFetch
-    nextAvailableFetch = now + nextFetchInterval
-    setTimeout fetchMap, 100
-  else
-    setTimeout fetchMap, nextAvailableFetch - now
-    nextAvailableFetch += nextFetchInterval
 
+
+      ndnIO.fetch(sitemapParam, onData, onTimeout)
+
+    ndnIO.fetch(sitemapParam, onData, onTimeout)
+
+  fetchMap()
 
 neighborhood.registerNeighbor = (site)->
   return if neighborhood.sites[site]?
   neighborInfo = {}
   neighborhood.sites[site] = neighborInfo
-  populateSiteInfoFor( site, neighborInfo )
-  $('body').trigger 'new-neighbor', site
+
+
+  onData = (requri, fav, actualuri) ->
+    populateSiteInfoFor( site, neighborInfo )
+    $('body').trigger 'new-neighbor', site, fav.uri
+
+  onTimeout = (uri) ->
+    console.log "flag fetch fail"
+
+  fav =
+    uri: "wiki/system/#{site}/favicon"
+    type: "object"
+
+  ndnIO.fetch fav, onData, onTimeout
 
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
