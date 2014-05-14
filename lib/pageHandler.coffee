@@ -24,6 +24,9 @@ module.exports = pageHandler = {}
 pageHandler.useLocalStorage = ->
   $(".login").length > 0
 
+pageHandler.id = ->
+  $(".local").data().hashname
+
 pageFromLocalStorage = (slug)->
   if json = localStorage[slug]
     JSON.parse(json)
@@ -36,6 +39,8 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
 
   {slug,rev,site} = pageInformation
 
+
+
   journalNum = 0
   triggered = false
 
@@ -46,19 +51,25 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   data =
     journal: []
 
-  onTimeout = (name) ->
-    console.log(journalNum, "timeout triggered")
+  onTimeout = (interest, name) ->
+
+    console.log(interest, name, "timeout triggered", site)
     if journalNum == 0
       whenNotGotten()
       triggered == true
     else
-      whenGotten newPage revision.create journalNum, data
+      if (site == pageHandler.id())
+        site = "origin"
+      whenGotten(newPage((revision.create(journalNum, data)), site))
 
 
-  onData = (name, thing) ->
+  onData = (name, thing, uri) ->
+    comps = uri.split("/")
+    site = comps[comps.length - 1]
     journalNum++
-    fetchParams.uri = "wiki/page/" + slug + '/' + journalNum
+
     data.journal.push(thing)
+    fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/' + site
     if (thing.item && thing.item.title)
       data.title = thing.item.title
 
@@ -104,11 +115,21 @@ pushToLocal = ($page, pagePutInfo, action) ->
 
 pushToServer = ($page, pagePutInfo, action) ->
 
+  if action.type == 'create'
+    action.item.site = pageHandler.id()
+  else
+    page = pageFromLocalStorage pagePutInfo.slug
+    page ||= $page.data("data")
+    page.journal = [] unless page.journal?
+    if (site=action['fork'])?
+      page.journal = page.journal.concat({'type':'fork','site':site})
+      delete action['fork']
+
   journalnum = $page.data("data").journal.length
   console.log journalnum,
   action.page = undefined
   publishOptions =
-    uri: "wiki/page/" + pagePutInfo.slug + "/" + journalnum ,
+    uri: "wiki/page/" + pagePutInfo.slug + "/" + journalnum + "/" + pageHandler.id(),
     freshness: 60 * 60 * 1000 ,
     type: 'object',
     thing: action
@@ -131,7 +152,7 @@ pageHandler.put = ($page, action) ->
   checkedSite = () ->
     switch site = $page.data('site')
       when 'origin', 'local', 'view' then null
-      when location.host then null
+      when pageHandler.id then null
       else site
 
   # about the page we have
