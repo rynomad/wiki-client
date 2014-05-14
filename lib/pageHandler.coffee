@@ -39,13 +39,14 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
 
   {slug,rev,site} = pageInformation
 
+  fetchingSelf = true
 
-
+  console.log(site)
   journalNum = 0
   triggered = false
 
   fetchParams =
-    uri: "wiki/page/" + slug + '/' + journalNum,
+    uri: "wiki/page/" + slug + '/' + journalNum + '/' + pageHandler.id(),
     type: "object"
 
   data =
@@ -54,9 +55,15 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   onTimeout = (interest, name) ->
 
     console.log(interest, name, "timeout triggered", site)
-    if journalNum == 0
+    if journalNum == 0 && fetchingSelf == true
+      fetchingSelf = false
+      fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/'
+      ndnIO.fetch(fetchParams, onData, onTimeout)
+
+    else if journalNum == 0 && fetchingSelf == false
       whenNotGotten()
       triggered == true
+
     else
       if (site == pageHandler.id())
         site = "origin"
@@ -66,15 +73,32 @@ recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
   onData = (name, thing, uri) ->
     comps = uri.split("/")
     site = comps[comps.length - 1]
-    journalNum++
+    if journalNum == 0 && thing.type == "fork"
+      thing.to = site
+      data.journal[thing.index] = thing
+      fetchForkFrom =
+        uri : "wiki/page/" + slug + '/' + 0 + '/' + thing.site,
+        type: "object"
 
-    data.journal.push(thing)
-    fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/' + site
-    if (thing.item && thing.item.title)
-      data.title = thing.item.title
+      ndnIO.fetch(fetchForkFrom, onData, onTimeout)
+
+    else
+
+      data.journal[journalNum] = thing
+      journalNum++
+
+      if ((data.journal[journalNum] != undefined) && (data.journal[journalNum].to != undefined))
+        journalNum++
+        fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/' + data.journal[journalNum - 1].to
+      else
+        fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/' + site
 
 
-    ndnIO.fetch(fetchParams, onData, onTimeout)
+      if (thing.item && thing.item.title)
+        data.title = thing.item.title
+
+
+      ndnIO.fetch(fetchParams, onData, onTimeout)
 
   ndnIO.fetch(fetchParams, onData, onTimeout)
 
@@ -114,20 +138,34 @@ pushToLocal = ($page, pagePutInfo, action) ->
 
 
 pushToServer = ($page, pagePutInfo, action) ->
-
+  console.log("pushToServer", action)
   if action.type == 'create'
     action.item.site = pageHandler.id()
   else
-    page = pageFromLocalStorage pagePutInfo.slug
-    page ||= $page.data("data")
+    page = $page.data("data")
     page.journal = [] unless page.journal?
     if (site=action['fork'])?
-      page.journal = page.journal.concat({'type':'fork','site':site})
+      action.index = page.journal.length
+      console.log("fork index is ", action.index)
+      $page.data("data").journal = $page.data("data").journal.concat({'type':'fork','site':site, "index": action.index})
       delete action['fork']
+      publishImplicitFork =
+        uri: "wiki/page/" + pagePutInfo.slug + "/" + 0 + "/" + pageHandler.id(),
+        freshness: 60 * 60 * 1000 ,
+        type: 'object',
+        thing: {'type':'fork','site':site, "index": action.index}
+
+      ndnIO.publish publishImplicitFork , cb
+
+    if (action.type == "fork")
+      action.index = page.journal.length
+
+
 
   journalnum = $page.data("data").journal.length
   console.log journalnum,
   action.page = undefined
+  console.log("ACTION", action)
   publishOptions =
     uri: "wiki/page/" + pagePutInfo.slug + "/" + journalnum + "/" + pageHandler.id(),
     freshness: 60 * 60 * 1000 ,
@@ -200,6 +238,7 @@ pageHandler.put = ($page, action) ->
 
   # store as appropriate
   if pageHandler.useLocalStorage() or pagePutInfo.site == 'local'
+    console.log("push to local")
     pushToLocal($page, pagePutInfo, action)
     $page.addClass("local")
   else

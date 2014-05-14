@@ -3,7 +3,7 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
-
+ndnIO = require "ndn-io"
 module.exports = neighborhood = {}
 
 neighborhood.sites = {}
@@ -21,8 +21,42 @@ populateSiteInfoFor = (site,neighborInfo)->
       .addClass(to)
 
   fetchMap = ->
-    sitemapUrl = "http://#{site}/system/sitemap.json"
+    sitemapNum = 0
+    sitemap = []
+    sitemapParam =
+      uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
+      type: "object"
+
     transition site, 'wait', 'fetch'
+
+    onData = (requri, entry, realuri ) ->
+      sitemap.push(entry)
+      sitemapNum++
+      sitemapParam =
+        uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
+        type: "object"
+
+      ndnIO.fetch(sitemapParam, onData, onTimeout )
+
+    onTimeout = (uri ) ->
+      if sitemapNum == 0
+        transition site, 'fetch', 'fail'
+      else
+        neighborInfo.sitemap = data
+        transition site, 'fetch', 'done'
+        $('body').trigger 'new-neighbor-done', site
+        sitemapParam =
+          uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
+          type: "object",
+          selectors:
+            interestLifetime: 60000
+
+
+        ndnIO.fetch(sitemapParam, onData, onTimeout)
+
+    ndnIO.fetch(sitemapParam, )
+
+
     request = $.ajax
       type: 'GET'
       dataType: 'json'
