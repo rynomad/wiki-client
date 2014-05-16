@@ -34,6 +34,7 @@ getIO = () ->
   else
     setTimeout getIO, 500
 
+getIO()
 
 getItem = ($item) ->
   $($item).data("item") or $($item).data('staticItem') if $($item).length > 0
@@ -217,8 +218,9 @@ createMissingFlag = ($page, pageObject) ->
   unless pageObject.isRemote()
     recursor = () ->
       if plugin.io
+        console.log("get favicon")
         $('img.favicon',$page).error ->
-          plugin.get 'favicon-alt', (favicon) ->
+          plugin.get 'favicon', (favicon) ->
             favicon.create()
       else
         setTimeout recursor, 500

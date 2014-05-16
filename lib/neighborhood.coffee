@@ -5,6 +5,8 @@
 _ = require 'underscore'
 ndnIO = null
 
+plugin = require "./plugin"
+
 module.exports = neighborhood = {}
 
 neighborhood.sites = {}
@@ -13,6 +15,7 @@ nextFetchInterval = 2000
 
 neighborhood.useIO = (io) ->
   ndnIO = io
+  plugin.useIO(io)
 
 populateSiteInfoFor = (site,neighborInfo)->
   console.log("POPULATESITEINFOFOR", site, neighborInfo)
@@ -79,6 +82,18 @@ neighborhood.registerNeighbor = (site)->
 
   onTimeout = (uri) ->
     console.log "flag fetch fail"
+    if site == $(".local").data().hashname
+      console.log("own flag fetch")
+      recursor = () ->
+        if plugin.io
+          console.log("get favicon")
+          plugin.get 'favicon', (favicon) ->
+            console.log "got favicon plugin", favicon
+            favicon.create()
+        else
+          setTimeout recursor, 500
+
+      recursor()
 
   fav =
     uri: "wiki/system/#{site}/favicon"

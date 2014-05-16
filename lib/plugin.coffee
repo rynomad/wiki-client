@@ -9,20 +9,24 @@ plugin.useIO = (io) ->
   ndnIO = io
   plugin.io = io
 
-cachedScript = (pluginName, options) ->
+cachedScript = (pluginName, callback) ->
   pluginParams =
     uri: "wiki/plugin/#{pluginName}"
-    type: "file"
+    type: "application/javascript"
 
 
   onData = (reqUri, script, actualUri) ->
-    url = window.URL.createObjectUrl(script)
+    url = window.URL.createObjectURL(script)
     options = $.extend(options or {},
       dataType: "script"
       cache: true
       url: url
     )
     $.ajax options
+      .done ->
+        scripts.push url
+        console.log "callback script"
+        callback()
 
   onTimeout = (uri) ->
     console.log "plugin fetch timeout"
@@ -35,19 +39,20 @@ getScript = plugin.getScript = (url, callback = () ->) ->
   if url in scripts
     callback()
   else
-    cachedScript(url)
+    cachedScript(url, callback)
       .done ->
         scripts.push url
+        console.log "callback script"
         callback()
       .fail ->
+        console.log "callback script"
         callback()
 
 plugin.get = plugin.getPlugin = (name, callback) ->
   return callback(window.plugins[name]) if window.plugins[name]
-  getScript "/plugins/#{name}/#{name}.js", () ->
+  getScript name, () ->
+    console.log "getScript callback"
     return callback(window.plugins[name]) if window.plugins[name]
-    getScript "/plugins/#{name}.js", () ->
-      callback(window.plugins[name])
 
 plugin.do = plugin.doPlugin = (div, item, done=->) ->
   error = (ex) ->
