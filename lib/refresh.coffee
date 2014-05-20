@@ -188,7 +188,7 @@ emitTwins = ($page) ->
 
         break if i >= 8
         """<img class="remote"
-          src="http://#{remoteSite}/favicon.png"
+          src="#{$("img[data-neighborFlag=#{remoteSite}]").attr("src")}"
           data-slug="#{slug}"
           data-site="#{remoteSite}"
           title="#{remoteSite}">

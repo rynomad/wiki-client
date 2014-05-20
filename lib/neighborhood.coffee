@@ -30,7 +30,10 @@ populateSiteInfoFor = (site,neighborInfo)->
       .addClass(to)
 
 
+  transition site, 'wait', 'fetch'
+
   cb = (sitemap) ->
+    console.log("sitemap callback")
     if sitemap == false
       transition site, 'fetch', 'fail'
       transition site, 'wait', 'fail'
@@ -39,6 +42,7 @@ populateSiteInfoFor = (site,neighborInfo)->
       neighborInfo.sitemap = sitemap
       transition site, 'fetch', 'done'
       $('body').trigger 'new-neighbor-done', site
+
 
   wik.getSitemap site, cb
 
@@ -52,13 +56,15 @@ neighborhood.registerNeighbor = (site)->
     console.log "registerNeighbor favicon callback", fav, site
     if (fav != false)
       populateSiteInfoFor( site, neighborInfo )
-      $('body').trigger 'new-neighbor', site, fav
+      p = [site, fav]
+      $('body').trigger 'new-neighbor', p
     else if  site == $(".local").data().hashname
 
       plugin.get 'favicon-alt', (favicon) ->
         favicon.create( (f) ->
                         populateSiteInfoFor( site, neighborInfo )
-                        $('body').trigger 'new-neighbor', site, f
+                        p = [site, f]
+                        $('body').trigger 'new-neighbor', p
                         wik.saveFavicon(f)
 
                       )

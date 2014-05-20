@@ -14,7 +14,7 @@ flag = (site, uri) ->
   """
     <span class="neighbor" data-site="#{site}">
       <div class="wait">
-        <img src="#{uri}" title="#{site}">
+        <img src="#{uri}" title="#{site}" data-neighborFlag=#{site}>
       </div>
     </span>
   """
@@ -25,8 +25,9 @@ inject = (neighborhood) ->
 bind = ->
   $neighborhood = $('.neighborhood')
   $('body')
-    .on 'new-neighbor', (e, site) ->
-      $neighborhood.append flag site, uri
+    .on 'new-neighbor', (e, site, fav) ->
+      $neighborhood.append flag site, fav
+      console.log("new neighbor", site, fav)
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')

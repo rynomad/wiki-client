@@ -57,13 +57,12 @@ wik.getPlugin = (scripts, pluginName, cb) ->
   io.fetch pluginParams, onData, onTimeout
 
 wik.getSitemap = (site, cb) ->
+  console.log("wik.getSitemap")
   sitemap = []
   sitemapNum = 0
   sitemapParam =
     uri  : "wiki/system/#{site}/sitemap/#{sitemapNum}",
     type : "object"
-
-  transition site, 'wait', 'fetch'
 
   onData = (requri, entry, realuri ) ->
     sitemap.push(entry)
@@ -72,7 +71,7 @@ wik.getSitemap = (site, cb) ->
       uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
       type: "object"
 
-    ndnIO.fetch(sitemapParam, onData, onTimeout )
+    io.fetch(sitemapParam, onData, onTimeout )
 
   onTimeout = (uri ) ->
     sitemapParam =
@@ -85,8 +84,8 @@ wik.getSitemap = (site, cb) ->
       cb(false)
     else
       cb(sitemap)
-      ndnIO.fetch(sitemapParam, onData, onTimeout)
+      io.fetch(sitemapParam, onData, onTimeout)
 
-  ndnIO.fetch(sitemapParam, onData, onTimeout)
+  io.fetch(sitemapParam, onData, onTimeout)
 
 wik.updateSitemap = () ->
