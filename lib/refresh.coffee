@@ -164,7 +164,7 @@ emitTwins = ($page) ->
   page = $page.data 'data'
   return unless page
   site = $page.data('site') or window.location.host
-  site = window.location.host if site in ['view', 'origin']
+  site = $(".local").data().hashname if site in ['view', 'origin']
   slug = asSlug page.title
   if (actions = page.journal?.length)? and (viewing = page.journal[actions-1]?.date)?
     viewing = Math.floor(viewing/1000)*1000
