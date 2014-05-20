@@ -12,6 +12,8 @@ random = require './random'
 neighborhood = require "./neighborhood"
 synopsis = require "./synopsis"
 
+wik = require "./wik"
+
 ndnIO = require("ndn-io")
 
 remoteNFD =

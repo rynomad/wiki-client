@@ -23,6 +23,7 @@ actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
 random = require './random'
+wik = require "./wik"
 
 pageModule = require('./page')
 newPage = pageModule.newPage
@@ -105,15 +106,29 @@ createFactory = ($page) ->
 
 emitHeader = ($header, $page, pageObject) ->
   viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
-  absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else ""
+  absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else $(".local").data().hashname
   tooltip = pageObject.getRemoteSiteDetails(location.host)
-  $header.append """
-    <h1 title="#{tooltip}">
-      <a href="#{absolute}/view/welcome-visitors#{viewHere}">
-        <img src="#{absolute}/favicon.png" height="32px" class="favicon">
-      </a> #{pageObject.getTitle()}
-    </h1>
-  """
+
+
+  cb = (fav) ->
+    console.log fav, absolute
+    if ((fav == false) && (absolute == $(".local").data().hashname))
+      plugin.get 'favicon-alt', (favicon) ->
+        favicon.create( (f) ->
+                        cb(f)
+                        wik.saveFavicon(f)
+
+                      )
+    else
+    $header.append """
+      <h1 title="#{tooltip}">
+        <a href="#{absolute}/view/welcome-visitors#{viewHere}">
+          <img src="#{fav}" height="32px" class="favicon">
+        </a> #{pageObject.getTitle()}
+      </h1>
+    """
+
+  wik.getFavicon absolute, cb
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
@@ -169,6 +184,7 @@ emitTwins = ($page) ->
       bin.sort (a,b) ->
         a.item.date < b.item.date
       flags = for {remoteSite, item}, i in bin
+
         break if i >= 8
         """<img class="remote"
           src="http://#{remoteSite}/favicon.png"

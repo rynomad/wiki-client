@@ -5,7 +5,8 @@
 _ = require 'underscore'
 ndnIO = null
 
-plugin = require "./plugin"
+
+wik = require "./wik"
 
 module.exports = neighborhood = {}
 
@@ -15,7 +16,6 @@ nextFetchInterval = 2000
 
 neighborhood.useIO = (io) ->
   ndnIO = io
-  plugin.useIO(io)
 
 populateSiteInfoFor = (site,neighborInfo)->
   console.log("POPULATESITEINFOFOR", site, neighborInfo)
@@ -28,47 +28,18 @@ populateSiteInfoFor = (site,neighborInfo)->
       .removeClass(from)
       .addClass(to)
 
-  fetchMap = ->
-    sitemapNum = 0
-    sitemap = []
-    sitemapParam =
-      uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
-      type: "object"
 
-    transition site, 'wait', 'fetch'
+  cb = (sitemap) ->
+    if sitemap == false
+      transition site, 'fetch', 'fail'
+      transition site, 'wait', 'fail'
+    else
+      transition site, "wait", "done"
+      neighborInfo.sitemap = sitemap
+      transition site, 'fetch', 'done'
+      $('body').trigger 'new-neighbor-done', site
 
-    onData = (requri, entry, realuri ) ->
-      sitemap.push(entry)
-      sitemapNum++
-      sitemapParam =
-        uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
-        type: "object"
-
-      ndnIO.fetch(sitemapParam, onData, onTimeout )
-
-    onTimeout = (uri ) ->
-      sitemapParam =
-          uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
-          type: "object",
-          selectors:
-            interestLifetime: 60000
-
-      if sitemapNum == 0
-        transition site, 'fetch', 'fail'
-        transition site, 'wait', 'fail'
-      else
-        transition site, "wait", "done"
-        neighborInfo.sitemap = sitemap
-        transition site, 'fetch', 'done'
-        $('body').trigger 'new-neighbor-done', site
-
-
-
-      ndnIO.fetch(sitemapParam, onData, onTimeout)
-
-    ndnIO.fetch(sitemapParam, onData, onTimeout)
-
-  fetchMap()
+  wik.getSitemap site, cb
 
 neighborhood.registerNeighbor = (site)->
   return if neighborhood.sites[site]?
@@ -76,30 +47,12 @@ neighborhood.registerNeighbor = (site)->
   neighborhood.sites[site] = neighborInfo
 
 
-  onData = (requri, fav, actualuri) ->
-    populateSiteInfoFor( site, neighborInfo )
-    $('body').trigger 'new-neighbor', site, fav.uri
+  cb = (fav) ->
+    if (fav != false)
+      populateSiteInfoFor( site, neighborInfo )
+      $('body').trigger 'new-neighbor', site, fav.uri
 
-  onTimeout = (uri) ->
-    console.log "flag fetch fail"
-    if site == $(".local").data().hashname
-      console.log("own flag fetch")
-      recursor = () ->
-        if plugin.io
-          console.log("get favicon")
-          plugin.get 'favicon', (favicon) ->
-            console.log "got favicon plugin", favicon
-            favicon.create()
-        else
-          setTimeout recursor, 500
-
-      recursor()
-
-  fav =
-    uri: "wiki/system/#{site}/favicon"
-    type: "object"
-
-  ndnIO.fetch fav, onData, onTimeout
+  wik.getFavicon(site, cb)
 
 neighborhood.listNeighbors = ()->
   _.keys( neighborhood.sites )
