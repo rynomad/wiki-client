@@ -19,19 +19,42 @@ wik.getFavicon = (site, cb) ->
     cb false
 
 
-  io.fetch fetchFav, onData, ()->
+  io.fetch fetchFav, onData, onTimeout
 
 wik.saveFavicon = (fav) ->
   param =
     type: "object",
-    uri: uri,
+    uri: "wiki/system/#{$('.local').data().hashname}/favicon",
     freshness: 60 * 60 * 1000
     thing:
       image: fav
 
-  ndnIO.publish param, (a, b) ->
+  io.publish param, (a, b) ->
     console.log(a,b)
 
+wik.getPlugin = (scripts, pluginName, cb) ->
+  pluginParams =
+    uri: "wiki/plugin/#{pluginName}"
+    type: "application/javascript"
+
+
+  onData = (reqUri, script, actualUri) ->
+    url = window.URL.createObjectURL(script)
+    options = $.extend(options or {},
+      dataType: "script"
+      cache: true
+      url: url
+    )
+    $.ajax options
+      .done ->
+        scripts.push url
+        console.log "callback script"
+        cb()
+
+  onTimeout = (uri) ->
+    console.log "plugin fetch timeout"
+
+  io.fetch pluginParams, onData, onTimeout
 
 wik.getSitemap = (site, cb) ->
   sitemap = []

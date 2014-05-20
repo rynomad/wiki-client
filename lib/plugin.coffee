@@ -2,6 +2,7 @@
 # javascript including additional scripts that may be requested.
 
 module.exports = plugin = {}
+wik = require "./wik"
 ndnIO = null
 # define cachedScript that allows fetching a cached script.
 # see example in http://api.jquery.com/jQuery.getScript/
@@ -10,28 +11,8 @@ plugin.useIO = (io) ->
   plugin.io = io
 
 cachedScript = (pluginName, callback) ->
-  pluginParams =
-    uri: "wiki/plugin/#{pluginName}"
-    type: "application/javascript"
+  wik.getPlugin scripts, pluginName, callback
 
-
-  onData = (reqUri, script, actualUri) ->
-    url = window.URL.createObjectURL(script)
-    options = $.extend(options or {},
-      dataType: "script"
-      cache: true
-      url: url
-    )
-    $.ajax options
-      .done ->
-        scripts.push url
-        console.log "callback script"
-        callback()
-
-  onTimeout = (uri) ->
-    console.log "plugin fetch timeout"
-
-  ndnIO.fetch pluginParams, onData, onTimeout
 
 scripts = []
 getScript = plugin.getScript = (url, callback = () ->) ->
@@ -40,13 +21,6 @@ getScript = plugin.getScript = (url, callback = () ->) ->
     callback()
   else
     cachedScript(url, callback)
-      .done ->
-        scripts.push url
-        console.log "callback script"
-        callback()
-      .fail ->
-        console.log "callback script"
-        callback()
 
 plugin.get = plugin.getPlugin = (name, callback) ->
   return callback(window.plugins[name]) if window.plugins[name]

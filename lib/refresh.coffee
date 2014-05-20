@@ -111,8 +111,9 @@ emitHeader = ($header, $page, pageObject) ->
 
 
   cb = (fav) ->
-    console.log fav, absolute
+    console.log fav, absolute, plugin
     if ((fav == false) && (absolute == $(".local").data().hashname))
+      console.log "plugin.get favicon-alt"
       plugin.get 'favicon-alt', (favicon) ->
         favicon.create( (f) ->
                         cb(f)

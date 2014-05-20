@@ -7,6 +7,7 @@ ndnIO = null
 
 
 wik = require "./wik"
+plugin = require "./plugin"
 
 module.exports = neighborhood = {}
 
@@ -48,9 +49,19 @@ neighborhood.registerNeighbor = (site)->
 
 
   cb = (fav) ->
+    console.log "registerNeighbor favicon callback", fav, site
     if (fav != false)
       populateSiteInfoFor( site, neighborInfo )
-      $('body').trigger 'new-neighbor', site, fav.uri
+      $('body').trigger 'new-neighbor', site, fav
+    else if  site == $(".local").data().hashname
+
+      plugin.get 'favicon-alt', (favicon) ->
+        favicon.create( (f) ->
+                        populateSiteInfoFor( site, neighborInfo )
+                        $('body').trigger 'new-neighbor', site, f
+                        wik.saveFavicon(f)
+
+                      )
 
   wik.getFavicon(site, cb)
 
