@@ -54,12 +54,13 @@ neighborhood.registerNeighbor = (site)->
 
   cb = (fav) ->
     console.log "registerNeighbor favicon callback", fav, site
+
     if (fav != false)
       populateSiteInfoFor( site, neighborInfo )
       p = [site, fav]
       $('body').trigger 'new-neighbor', p
     else if  site == $(".local").data().hashname
-
+      wik.federate(site)
       plugin.get 'favicon-alt', (favicon) ->
         favicon.create( (f) ->
                         populateSiteInfoFor( site, neighborInfo )
@@ -68,6 +69,9 @@ neighborhood.registerNeighbor = (site)->
                         wik.saveFavicon(f)
 
                       )
+
+    if (site == $(".local").data().hashname)
+      wik.federate(site)
 
   wik.getFavicon(site, cb)
 
