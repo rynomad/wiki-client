@@ -162,7 +162,8 @@ pushToServer = ($page, pagePutInfo, action) ->
         thing: {'type':'fork','site':site, "index": action.index}
 
       ndnIO.publish publishImplicitFork , cb
-
+    else
+      publishImplicitFork = null
     if (action.type == "fork")
       action.index = page.journal.length
 
@@ -182,34 +183,45 @@ pushToServer = ($page, pagePutInfo, action) ->
   addToJournal $page.find('.journal'), action
 
   cb = (success) ->
+    console.log(page)
     if success is true
       console.log("publish action success")
-      if ((action.type is "create" or "fork") or (publishImplicitFork?))
-        sitemapUpdate =
-          synopsis : synopsis $page.data("data"),
-          date : $page.data("data").journal[$page.data("data").journal.length - 1].date,
-          slug : pagePutInfo.slug,
-          title: $page.data("data").title
+      page = revision.create($page.data("data").journal.length, $page.data("data"))
+      sitemapUpdate =
+        synopsis : synopsis(page),
+        date : action.date,
+        slug : pagePutInfo.slug,
+        title: $page.data("data").title
 
-        updateParams =
-          type: "object",
-          thing: sitemapUpdate
+      console.log("sitemapUpdate", sitemapUpdate)
 
-        mapped = false
-        sitemap = neighborhood.sites[pageHandler.id()].sitemap
-        i = 0
-        for entry in sitemap
-          if entry.slug == pagePutInfo.slug
-            mapped = true
-            updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{i}"
+      updateParams =
+        type: "object",
+        version: true,
+        thing: sitemapUpdate
+
+      mapped = false
+      sitemap = neighborhood.sites[pageHandler.id()].sitemap
+      i = 0
+      for entry in sitemap
+        console.log(entry, pagePutInfo)
+        if entry.slug == pagePutInfo.slug
+          mapped = true
+          updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{i}"
+          continue
+        else
           i++
 
-        if mapped == false
-          console.log sitemap, sitemap.length
-          updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{sitemap.length}"
+      if mapped == false
+        console.log sitemap, sitemap.length
+        updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{sitemap.length}"
 
-        ndnIO.publish  updateParams, (s) ->
-          console.log s, "did we update the sitemap???"
+      ndnIO.publish  updateParams, (s) ->
+        console.log s, "did we update the sitemap???"
+        if mapped == false
+          sitemap.push sitemapUpdate
+        else
+          sitemap[i] = sitemapUpdate
 
     else
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!publish action fail!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

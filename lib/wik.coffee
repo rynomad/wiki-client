@@ -62,7 +62,9 @@ wik.getSitemap = (site, cb) ->
   sitemapNum = 0
   sitemapParam =
     uri  : "wiki/system/#{site}/sitemap/#{sitemapNum}",
-    type : "object"
+    type : "object",
+    selectors:
+      child: "right"
 
   onData = (requri, entry, realuri ) ->
     sitemap.push(entry)
@@ -70,6 +72,8 @@ wik.getSitemap = (site, cb) ->
     sitemapParam =
       uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
       type: "object"
+      selectors:
+        child: "right"
 
     io.fetch(sitemapParam, onData, onTimeout )
 
@@ -78,6 +82,7 @@ wik.getSitemap = (site, cb) ->
       uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
       type: "object",
       selectors:
+        child: "right",
         interestLifetime: 60000
 
     if sitemapNum == 0
