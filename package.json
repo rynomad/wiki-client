@@ -26,7 +26,8 @@
   ],
   "dependencies": {
     "underscore": "*",
-    "ndn-io": "*"
+    "ndn-io": "*",
+    "ndn-lib": "git+https://github.com/rynomad/ndn-js#npm"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

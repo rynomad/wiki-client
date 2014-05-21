@@ -60,7 +60,7 @@ newPage = (json, site) ->
 	getNeighbors = (host) ->
     neighbors = []
     if isRemote()
-      neighbors.push site
+      neighbors.push host
     else
       neighbors.push host if host?
     for item in page.story

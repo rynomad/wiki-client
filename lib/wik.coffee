@@ -1,13 +1,15 @@
 wik = {}
 io = require("ndn-io")
+ndn = require("ndn-lib")
 revision = require("./revision")
 
 module.exports = wik
 
 wik.federation = {}
 
-wik.assignSelf = (hashname) ->
-  wik.self = hashname
+wik.self = () ->
+  $(".local").data().hashname
+
 
 wik.getPage = (slug, whenGotten, whenNotGotten) ->
   gotten = false
@@ -20,7 +22,7 @@ wik.getPage = (slug, whenGotten, whenNotGotten) ->
   triggered = false
 
   fetchParams =
-    uri: "wiki/page/" + slug + '/' + journalNum + '/' + wik.self,
+    uri: "wiki/page/" + slug + '/' + journalNum + '/' + wik.self(),
     type: "object"
 
   data =
@@ -165,15 +167,18 @@ wik.getSitemap = (site, cb) ->
 wik.updateSitemap = () ->
 
 
-wik.federate = (site) ->
-  console.log("making face", site)
+wik.federate = (site, cb) ->
+  console.log("federating", site)
+
+  if wik.self() == undefined
+    return setTimeout wik.federate, 2000, site, cb
 
   thishost = site.split(':')[0]
 
   remoteFaceID = ""
 
-  if ((wik.self != thishost) && (thishost != "localhost") && (thishost != "127.0.0.1") && (thishost != "66.185.108.210"))
-
+  if ((wik.self() != thishost) && (thishost != "localhost") && (thishost != "127.0.0.1") && (thishost != "66.185.108.210"))
+    console.log "remoteSite", wik.self(), thishost
     params =
       host: thishost,
       port: 6464,
@@ -198,11 +203,15 @@ wik.federate = (site) ->
     com.append(enc.buffer)
     inst = new ndn.Interest(com)
 
+    fetchfacade =
+      uri: com.toUri(),
+      type: "object",
 
     onSitemap = (sitemap) ->
       if sitemap == false
         return
       else
+
         for page in sitemap
           nexthop =
             uri: "wiki/page/" + page.slug,
@@ -213,12 +222,22 @@ wik.federate = (site) ->
           d.sign()
           n = new ndn.Name("localhost/nfd/fib/add-nexthop")
           n.append(d.wireEncode().buffer)
-          i = new ndn.Interest(n)
-          face.expressInterest(i)
 
-    onData = (interest, data) ->
-      console.log("makeFace got Response", data.content.toString())
-      remoteFaceID = JSON.parse(data.content.toString()).faceID
+          nextHopFacade =
+            uri: n.toUri()
+            type: "object"
+          i = new ndn.Interest(n)
+          nu = (arg)->
+            console.log "facade cb", arg
+
+
+
+          io.fetch nextHopFacade, nu , nu
+
+    onData = (uri, data, actualUri) ->
+      console.log("makeFace got Response", data)
+      cb(site)
+      remoteFaceID = data.faceID
       #neighborhood[site].hashName = JSON.parse(data.content).ndndid
       #console.log(neighborhood[site], thishost)
       wik.getSitemap thishost, onSitemap
@@ -227,9 +246,10 @@ wik.federate = (site) ->
     onTimeout = (interest) ->
       console.log("makeFace timeout", site)
 
-    face.expressInterest(inst, onData, onTimeout)
+    io.fetch fetchfacade, onData, onTimeout
 
-  else if wik.self == thishost
+  else if wik.self() == thishost
+    console.log "wik.self"
     onPage = (page) ->
 
       for action in page.journal
@@ -238,6 +258,7 @@ wik.federate = (site) ->
           wik.federate(action.site)
 
     onSitemap = (sitemap) ->
+      cb(site)
       if sitemap != false
         for entry in sitemap
           wik.getPage(entry.slug, onPage, ()->)
