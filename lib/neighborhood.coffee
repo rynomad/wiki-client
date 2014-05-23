@@ -20,41 +20,40 @@ neighborhood.useIO = (io) ->
 
 populateSiteInfoFor = (site,neighborInfo)->
   console.log("POPULATESITEINFOFOR", site, neighborInfo)
-  return if neighborInfo.sitemapRequestInflight
-  neighborInfo.sitemapRequestInflight = true
-
   transition = (site, from, to) ->
     $(""".neighbor[data-site="#{site}"]""")
       .find('div')
       .removeClass(from)
       .addClass(to)
 
-
+  triggered = false
   transition site, 'wait', 'fetch'
 
-  cb = (sitemap) ->
+  cb = (entry) ->
     console.log("sitemap callback")
-    if sitemap == false
+    if entry == false
       transition site, 'fetch', 'fail'
       transition site, 'wait', 'fail'
     else
       transition site, "wait", "done"
-      neighborInfo.sitemap = sitemap
+      neighborInfo.sitemap.push(entry)
       transition site, 'fetch', 'done'
-      $('body').trigger 'new-neighbor-done', site
-
-
-  wik.getSitemap site, cb
+      if triggered == false
+        triggered = true
+        $('body').trigger 'new-neighbor-done', site
+      else
+        $('body').trigger 'neighbor-update', site
+  wik.getSitemapEntries site, cb
 
 neighborhood.registerNeighbor = (site)->
+  console.log "registerNeighbor called"
   return if neighborhood.sites[site]?
-  neighborInfo = {}
+  neighborInfo = {sitemap: []}
   neighborhood.sites[site] = neighborInfo
 
 
-  cb2 = (fav) ->
-    console.log "registerNeighbor favicon callback", fav, site
-
+  console.log "registerNeighbor favicon callback", fav, site
+  cb = (fav) ->
     if (fav != false)
       populateSiteInfoFor( site, neighborInfo )
       p = [site, fav]
@@ -62,19 +61,18 @@ neighborhood.registerNeighbor = (site)->
     else if  site == $(".local").data().hashname
       plugin.get 'favicon-alt', (favicon) ->
         favicon.create( (f) ->
-                        populateSiteInfoFor( site, neighborInfo )
-                        p = [site, f]
-                        $('body').trigger 'new-neighbor', p
-                        wik.saveFavicon(f)
+                       populateSiteInfoFor( site, neighborInfo )
+                       p = [site, f]
+                       $('body').trigger 'new-neighbor', p
+                       wik.saveFavicon(f)
 
                       )
 
-
-
-  cb1 = (site) ->
-    wik.getFavicon(site, cb2) unless site == false
-
-  wik.federate(site, cb1)
+  if $(".favicon[data-site=#{site}]").length > 0
+    fav = $("img[data-neighborFlag=#{site}]").attr("src")
+    cb fav
+  else
+    wik.getFavicon(site, cb)
 
 
 neighborhood.listNeighbors = ()->

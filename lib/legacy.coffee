@@ -161,10 +161,14 @@ $ ->
     $("footer input:first").val $(this).attr('data-provider')
     $("footer form").submit()
 
-  $('body').on 'new-neighbor-done', (e, neighbor) ->
-    $('.page').each (index, element) ->
-      refresh.emitTwins $(element)
+  $('body')
+    .on 'new-neighbor-done', (e, neighbor) ->
+      $('.page').each (index, element) ->
+        refresh.emitTwins $(element)
 
+    .on 'neighbor-update', (e, site) ->
+      $('.page').each (index, element) ->
+        refresh.emitTwins $(element)
   $ ->
     state.first()
     $('.page').each refresh.cycle

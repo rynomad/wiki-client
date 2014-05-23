@@ -40,74 +40,19 @@ pageFromLocalStorage = (slug)->
     undefined
 
 recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
+  cycle = () ->
+    gotten = false
 
-  gotten = false
+    {slug,rev,site} = pageInformation
+    wg = (page, site) ->
+      whenGotten newPage(page, site)
 
-  {slug,rev,site} = pageInformation
-
-  fetchingSelf = true
-
-  console.log(site)
-  journalNum = 0
-  triggered = false
-
-  fetchParams =
-    uri: "wiki/page/" + slug + '/' + journalNum + '/' + pageHandler.id(),
-    type: "object"
-
-  data =
-    journal: []
-
-  onTimeout = (interest, name) ->
-
-    console.log(interest, name, "timeout triggered", site)
-    if journalNum == 0 && fetchingSelf == true
-      fetchingSelf = false
-      fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/'
-      ndnIO.fetch(fetchParams, onData, onTimeout)
-
-    else if journalNum == 0 && fetchingSelf == false
-      whenNotGotten()
-      triggered == true
-
+    console.log "RECURSIVEGET"
+    if pageHandler.id() != undefined
+      wik.getPage pageInformation, wg, whenNotGotten
     else
-      if (site == pageHandler.id())
-        site = "origin"
-      whenGotten(newPage((revision.create(journalNum, data)), site))
-
-
-  onData = (name, thing, uri) ->
-    comps = uri.split("/")
-    site = comps[comps.length - 1]
-    if journalNum == 0 && thing.type == "fork"
-      thing.to = site
-      data.journal[thing.index] = thing
-      fetchForkFrom =
-        uri : "wiki/page/" + slug + '/' + 0 + '/' + thing.site,
-        type: "object"
-
-      ndnIO.fetch(fetchForkFrom, onData, onTimeout)
-
-    else
-
-      data.journal[journalNum] = thing
-      journalNum++
-
-      if ((data.journal[journalNum] != undefined) && (data.journal[journalNum].to != undefined))
-        journalNum++
-        fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/' + data.journal[journalNum - 1].to
-      else
-        fetchParams.uri = "wiki/page/" + slug + '/' + journalNum + '/' + site
-
-
-      if (thing.item && thing.item.title)
-        data.title = thing.item.title
-
-
-      ndnIO.fetch(fetchParams, onData, onTimeout)
-
-  ndnIO.fetch(fetchParams, onData, onTimeout)
-
+      $(".local").on "self", cycle
+  cycle()
 
 pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 
@@ -208,6 +153,7 @@ pushToServer = ($page, pagePutInfo, action) ->
         if entry.slug == pagePutInfo.slug
           mapped = true
           updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{i}"
+          sitemap[i] = sitemapUpdate
           continue
         else
           i++
@@ -215,13 +161,11 @@ pushToServer = ($page, pagePutInfo, action) ->
       if mapped == false
         console.log sitemap, sitemap.length
         updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{sitemap.length}"
+        sitemap.push sitemapUpdate
 
       ndnIO.publish  updateParams, (s) ->
         console.log s, "did we update the sitemap???"
-        if mapped == false
-          sitemap.push sitemapUpdate
-        else
-          sitemap[i] = sitemapUpdate
+
 
     else
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!publish action fail!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")

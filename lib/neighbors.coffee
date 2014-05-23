@@ -34,6 +34,12 @@ bind = ->
       img.attr('title', "#{site}\n #{pageCount} pages")
       totalPages += pageCount
       $('.searchbox .pages').text "#{totalPages} pages"
+    .on 'neighbor-update', (e, site) ->
+      pageCount = sites[site].sitemap.length
+      img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
+      img.attr('title', "#{site}\n #{pageCount} pages")
+      totalPages++
+      $('.searchbox .pages').text "#{totalPages} pages"
     .delegate '.neighbor img', 'click', (e) ->
       link.doInternalLink 'welcome-visitors', null, @.title.split("\n")[0]
 

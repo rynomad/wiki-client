@@ -106,30 +106,38 @@ createFactory = ($page) ->
 
 emitHeader = ($header, $page, pageObject) ->
   viewHere = if pageObject.getSlug() is 'welcome-visitors' then "" else "/view/#{pageObject.getSlug()}"
-  absolute = if pageObject.isRemote() then "//#{pageObject.getRemoteSite()}" else $(".local").data().hashname
+  absolute = if pageObject.isRemote() then "#{pageObject.getRemoteSite()}" else $(".local").data().hashname
   tooltip = pageObject.getRemoteSiteDetails(location.host)
 
-
-  cb = (fav) ->
-    console.log fav, absolute, plugin
-    if ((fav == false) && (absolute == $(".local").data().hashname))
-      console.log "plugin.get favicon-alt"
-      plugin.get 'favicon-alt', (favicon) ->
-        favicon.create( (f) ->
-                        cb(f)
-                        wik.saveFavicon(f)
-
-                      )
-    else
+  if $("img[data-neighborFlag=#{absolute}]").length > 0
     $header.append """
-      <h1 title="#{tooltip}">
-        <a href="#{absolute}/view/welcome-visitors#{viewHere}">
-          <img src="#{fav}" height="32px" class="favicon">
-        </a> #{pageObject.getTitle()}
-      </h1>
-    """
+          <h1 title="#{tooltip}">
+            <a href="#{absolute}/view/welcome-visitors#{viewHere}">
+              <img src="#{$("img[data-neighborFlag=#{absolute}]").attr('src')}" height="32px" class="favicon" data-site="#{absolute}">
+            </a> #{pageObject.getTitle()}
+          </h1>
+        """
+  else
+    cb = (fav) ->
+      console.log fav, absolute, plugin
+      if ((fav == false) && (absolute == $(".local").data().hashname))
+        console.log "plugin.get favicon-alt"
+        plugin.get 'favicon-alt', (favicon) ->
+          favicon.create( (f) ->
+                          cb(f)
+                          wik.saveFavicon(f)
 
-  wik.getFavicon absolute, cb
+                        )
+      else
+        $header.append """
+          <h1 title="#{tooltip}">
+            <a href="#{absolute}/view/welcome-visitors#{viewHere}">
+              <img src="#{fav}" height="32px" class="favicon" data-site="#{absolute}">
+            </a> #{pageObject.getTitle()}
+          </h1>
+        """
+
+    wik.getFavicon absolute, cb
 
 emitTimestamp = ($header, $page, pageObject) ->
   if $page.attr('id').match /_rev/
@@ -163,7 +171,7 @@ emitFooter = ($footer, pageObject) ->
 emitTwins = ($page) ->
   page = $page.data 'data'
   return unless page
-  site = $page.data('site') or window.location.host
+  site = $page.data('site') or $(".local").data().hashname
   site = $(".local").data().hashname if site in ['view', 'origin']
   slug = asSlug page.title
   if (actions = page.journal?.length)? and (viewing = page.journal[actions-1]?.date)?
