@@ -102,16 +102,13 @@ wik.getFavicon = (site, cb) ->
     type: "object"
     uri: "wiki/system/#{site}/favicon"
     selectors:
-      interestLifetime = 50000
+      interestLifetime = 2000
 
   onData = (uri, favicon, actual) ->
     cb favicon.image
 
   onTimeout = (uri) ->
-    if site == wik.self()
-      cb(false)
-    else
-      io.fetch fetchFav, onData, onTimeout
+    cb(false)
 
 
   io.fetch fetchFav, onData, onTimeout
@@ -159,7 +156,8 @@ wik.getSitemapEntries = (site, cb) ->
     uri  : "wiki/system/#{site}/sitemap/#{sitemapNum}",
     type : "object",
     selectors:
-      child: "right"
+      child: "right",
+      maxSuffix: 2
 
   onData = (requri, entry, realuri ) ->
     cb(entry)
@@ -168,7 +166,8 @@ wik.getSitemapEntries = (site, cb) ->
       uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
       type: "object"
       selectors:
-        child: "right"
+        child: "right",
+        maxSuffix: 2
 
     io.fetch(sitemapParam, onData, onTimeout )
 
@@ -178,12 +177,15 @@ wik.getSitemapEntries = (site, cb) ->
       type: "object",
       selectors:
         child: "right",
+        maxSuffix: 2,
         interestLifetime: 60000
 
     if sitemapNum == 0
       cb(false)
     else
-      io.fetch(sitemapParam, onData, onTimeout)
+      setTimeout(()->
+                  io.fetch(sitemapParam, onData, onTimeout)
+                ,   10000)
 
   io.fetch(sitemapParam, onData, onTimeout)
 
@@ -203,32 +205,17 @@ wik.federate = (site, cb) ->
     wik.federation[thishost] = {sitemap: []}
     console.log "remoteSite", wik.self(), thishost
     params =
-      host: thishost,
-      port: 6464,
       nextHop:
         uri: "wiki/system/" + thishost
 
+
     if thishost.length > 30
       params.protocol = "th"
+      params.hashname = thishost
     else
-      params.protocol = "tcp"
-
-
-    #console.log thishost, host
-
-    dat = new ndn.Data(new ndn.Name(''), new ndn.SignedInfo(), JSON.stringify(params))
-    dat.signedInfo.setFields()
-    dat.sign()
-    enc = dat.wireEncode()
-
-    com = new ndn.Name("localhost/nfd/faces/create")
-
-    com.append(enc.buffer)
-    inst = new ndn.Interest(com)
-
-    fetchfacade =
-      uri: com.toUri(),
-      type: "object",
+      params.protocol = "ws"
+      params.host = thishost
+      params.port = 6565
 
     onEntry = (entry) ->
       if entry == false
@@ -256,19 +243,16 @@ wik.federate = (site, cb) ->
 
         io.fetch nextHopFacade, nu , nu
 
-    onData = (uri, data, actualUri) ->
-      console.log("makeFace got Response", data)
-      cb(site)
-      remoteFaceID = data.faceID
-      #neighborhood[site].hashName = JSON.parse(data.content).ndndid
-      #console.log(neighborhood[site], thishost)
-      wik.getSitemapEntries thishost, onEntry
+    responder = (data, success) ->
+      console.log("makeFace got Response", success)
+      if success == true
+        cb(site)
+        remoteFaceID = data.faceID
+        #neighborhood[site].hashName = JSON.parse(data.content).ndndid
+        #console.log(neighborhood[site], thishost)
+        wik.getSitemapEntries thishost, onEntry
 
-
-    onTimeout = (interest) ->
-      console.log("makeFace timeout", site)
-
-    io.fetch fetchfacade, onData, onTimeout
+    io.makeFace params, responder
 
 wik.init = () ->
   cycle = () ->

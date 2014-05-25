@@ -145,23 +145,23 @@ pushToServer = ($page, pagePutInfo, action) ->
         version: true,
         thing: sitemapUpdate
 
-      mapped = false
-      sitemap = neighborhood.sites[pageHandler.id()].sitemap
-      i = 0
-      for entry in sitemap
-        console.log(entry, pagePutInfo)
-        if entry.slug == pagePutInfo.slug
-          mapped = true
-          updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{i}"
-          sitemap[i] = sitemapUpdate
-          continue
-        else
-          i++
-
-      if mapped == false
+      sitemap = neighborhood.sites[wik.self()].sitemap
+      if action.type == "create"
         console.log sitemap, sitemap.length
         updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{sitemap.length}"
         sitemap.push sitemapUpdate
+      else
+        i = 0
+        for entry in sitemap
+          console.log(entry, pagePutInfo)
+          if entry.slug == pagePutInfo.slug
+            updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{i}"
+            sitemap[i] = sitemapUpdate
+            continue
+          else
+            i++
+
+
 
       ndnIO.publish  updateParams, (s) ->
         console.log s, "did we update the sitemap???"

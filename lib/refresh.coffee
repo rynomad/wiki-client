@@ -120,7 +120,7 @@ emitHeader = ($header, $page, pageObject) ->
   else
     cb = (fav) ->
       console.log fav, absolute, plugin
-      if ((fav == false) && (absolute == $(".local").data().hashname))
+      if ((fav == false) && (absolute == wik.self()))
         console.log "plugin.get favicon-alt"
         plugin.get 'favicon-alt', (favicon) ->
           favicon.create( (f) ->
@@ -174,6 +174,48 @@ emitTwins = ($page) ->
   site = $page.data('site') or $(".local").data().hashname
   site = $(".local").data().hashname if site in ['view', 'origin']
   slug = asSlug page.title
+
+  $page.find('.twins')
+    .html ""
+
+  j = 0
+  $custody = null
+  console.log "EMITTWINS"
+  for action in page.journal
+    if (action.type == "create") || (action.type == "fork")
+
+      console.log action
+      site = (action.site || (action.item && action.item.site))
+      if site
+        console.log action
+        if $custody != null
+          $custody.text(j)
+          $custody.attr("data-count", j)
+          j = 0
+        console.log "updated old"
+        $custody = $("""<a href="#" /> """).addClass("action").addClass(action.type)
+          .attr('data-site',site)
+
+        console.log
+        if ($("img[data-neighborFlag='#{site}']").length > 0)
+          flag = $("img[data-neighborFlag='#{site}']").attr('src')
+          $custody.css("background-image", "url('#{flag}')")
+        console.log $custody
+        $page.find('.twins')
+          .append($custody)
+      else
+        j++
+    else
+      j++
+
+  $custody.attr('data-count', j)
+  $custody.text(j)
+  console.log "ERROR?"
+  ###
+
+
+
+
   if (actions = page.journal?.length)? and (viewing = page.journal[actions-1]?.date)?
     viewing = Math.floor(viewing/1000)*1000
     bins = {newer:[], same:[], older:[]}
@@ -203,6 +245,7 @@ emitTwins = ($page) ->
         """
       twins.push "#{flags.join '&nbsp;'} #{legend}"
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
+  ###
 
 renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())

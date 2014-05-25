@@ -21,7 +21,7 @@ neighborhood.useIO = (io) ->
 populateSiteInfoFor = (site,neighborInfo)->
   console.log("POPULATESITEINFOFOR", site, neighborInfo)
   transition = (site, from, to) ->
-    $(""".neighbor[data-site="#{site}"]""")
+    $(""".neighbor[data-site='#{site}']""")
       .find('div')
       .removeClass(from)
       .addClass(to)
@@ -58,7 +58,7 @@ neighborhood.registerNeighbor = (site)->
       populateSiteInfoFor( site, neighborInfo )
       p = [site, fav]
       $('body').trigger 'new-neighbor', p
-    else if  site == $(".local").data().hashname
+    else if  site == wik.self()
       plugin.get 'favicon-alt', (favicon) ->
         favicon.create( (f) ->
                        populateSiteInfoFor( site, neighborInfo )
@@ -68,7 +68,7 @@ neighborhood.registerNeighbor = (site)->
 
                       )
 
-  if $(".favicon[data-site=#{site}]").length > 0
+  if $(".favicon[data-site='#{site}']").length > 0
     fav = $("img[data-neighborFlag=#{site}]").attr("src")
     cb fav
   else
