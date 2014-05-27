@@ -174,7 +174,7 @@ emitTwins = ($page) ->
   site = $page.data('site') or $(".local").data().hashname
   site = $(".local").data().hashname if site in ['view', 'origin']
   slug = asSlug page.title
-
+  ###
   $page.find('.twins')
     .html ""
 
@@ -245,7 +245,6 @@ emitTwins = ($page) ->
         """
       twins.push "#{flags.join '&nbsp;'} #{legend}"
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
-  ###
 
 renderPageIntoPageElement = (pageObject, $page) ->
   $page.data("data", pageObject.getRawPage())

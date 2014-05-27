@@ -156,8 +156,7 @@ wik.getSitemapEntries = (site, cb) ->
     uri  : "wiki/system/#{site}/sitemap/#{sitemapNum}",
     type : "object",
     selectors:
-      child: "right",
-      maxSuffix: 2
+      child: "right"
 
   onData = (requri, entry, realuri ) ->
     cb(entry)
@@ -166,8 +165,7 @@ wik.getSitemapEntries = (site, cb) ->
       uri : "wiki/system/#{site}/sitemap/#{sitemapNum}",
       type: "object"
       selectors:
-        child: "right",
-        maxSuffix: 2
+        child: "right"
 
     io.fetch(sitemapParam, onData, onTimeout )
 
@@ -177,7 +175,6 @@ wik.getSitemapEntries = (site, cb) ->
       type: "object",
       selectors:
         child: "right",
-        maxSuffix: 2,
         interestLifetime: 60000
 
     if sitemapNum == 0
