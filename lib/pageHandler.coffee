@@ -149,7 +149,7 @@ pushToServer = ($page, pagePutInfo, action) ->
       if action.type == "create"
         console.log sitemap, sitemap.length
         updateParams.uri = "wiki/system/#{pageHandler.id()}/sitemap/#{sitemap.length}"
-        sitemap.push sitemapUpdate
+        #sitemap.push sitemapUpdate
       else
         i = 0
         for entry in sitemap

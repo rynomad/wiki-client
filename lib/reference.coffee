@@ -15,7 +15,7 @@ emit = ($item, item) ->
     $item.append """
       <p style='margin-bottom:3px;'>
         <img class='remote'
-          src='#{$("img[data-neighborFlag=#{site}]").attr("src")}'
+          src='#{$("img[data-neighborFlag='#{site}']").attr("src")}'
           title='#{site}'
           data-site="#{site}"
           data-slug="#{slug}"

@@ -223,22 +223,12 @@ wik.federate = (site, cb) ->
           uri: "wiki/page/" + entry.slug,
           faceID : remoteFaceID
 
-        d = new ndn.Data(new ndn.Name(), new ndn.SignedInfo(), JSON.stringify(nexthop))
-        d.signedInfo.setFields()
-        d.sign()
-        n = new ndn.Name("localhost/nfd/fib/add-nexthop")
-        n.append(d.wireEncode().buffer)
-
-        nextHopFacade =
-        uri: n.toUri()
-        type: "object"
-        i = new ndn.Interest(n)
-        nu = (arg)->
-          console.log "facade cb", arg
+        cb = (opts, success)->
+          console.log "nextHop success for #{opts.uri}: ", success
 
 
 
-        io.fetch nextHopFacade, nu , nu
+        io.addNextHop nexthop, cb
 
     responder = (data, success) ->
       console.log("makeFace got Response", success)
