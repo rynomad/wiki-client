@@ -8,6 +8,7 @@ resolve = require './resolve'
 pageHandler = require './pageHandler'
 editor = require './editor'
 synopsis = require './synopsis'
+wik = require './wik'
 
 emit = ($item, item) ->
   $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
@@ -36,9 +37,10 @@ emit = ($item, item) ->
   else if window.catalog?
     showMenu()
   else
-    $.getJSON '/system/factories.json', (data) ->
-      window.catalog = data
-      showMenu()
+    wik.getPluginCatalog(undefined, (data)->
+                         window.catalog = data
+                         showMenu()
+                        )
 
 bind = ($item, item) ->
 

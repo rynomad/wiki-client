@@ -28,6 +28,9 @@ plugin.get = plugin.getPlugin = (name, callback) ->
     console.log "getScript callback"
     return callback(window.plugins[name]) if window.plugins[name]
 
+plugin.getCSS = (name, callback) ->
+  wik.getCSS name, callback
+
 plugin.do = plugin.doPlugin = (div, item, done=->) ->
   error = (ex) ->
     errorElement = $("<div />").addClass('error')

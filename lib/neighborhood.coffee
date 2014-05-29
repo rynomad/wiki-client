@@ -15,8 +15,9 @@ neighborhood.sites = {}
 nextAvailableFetch = 0
 nextFetchInterval = 2000
 
-neighborhood.useIO = (io) ->
-  ndnIO = io
+wik.init(()->
+          neighborhood.registerNeighbor(wik.self())
+        )
 
 populateSiteInfoFor = (site,neighborInfo)->
   console.log("POPULATESITEINFOFOR", site, neighborInfo)

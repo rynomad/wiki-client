@@ -7,6 +7,7 @@ module.exports = wik
 
 wik.federation = {}
 
+
 wik.self = () ->
   d = $(".local").data()
   if d
@@ -148,6 +149,49 @@ wik.getPlugin = (scripts, pluginName, cb) ->
 
   io.fetch pluginParams, onData, onTimeout
 
+wik.getCSS = (name, callback) ->
+  param =
+    uri: "wiki/css/#{name}"
+    type: "text/css"
+
+  onData = (reqUri, css, actualUri) ->
+    reader = new FileReader()
+    reader.addEventListener("load", (event) ->
+                            $('<style type="text/css"></style>').html(event.target.result).appendTo("head")
+                            callback()
+                           )
+    reader.readAsText(css)
+
+
+  onTimeout = (uri) ->
+    console.log "css fetch timeout"
+
+  io.fetch param, onData, onTimeout
+
+
+wik.getPluginCatalog = (site, cb) ->
+  site ||= wik.self()
+  factoryNum = 0
+  catalog = []
+
+  catalogParam =
+    uri  : "wiki/system/#{site}/factories/#{factoryNum}"
+    type : "object"
+
+  onData = (requri, entry, realuri ) ->
+    catalog.push(entry)
+    factoryNum++
+    catalogParam =
+      uri : "wiki/system/#{site}/factories/#{factoryNum}",
+      type: "object"
+
+    io.fetch(catalogParam, onData, onTimeout )
+
+  onTimeout = (uri) ->
+    cb(catalog)
+
+  io.fetch(catalogParam, onData, onTimeout)
+
 wik.getSitemapEntries = (site, cb) ->
   console.log("wik.getSitemap", site)
   sitemap = []
@@ -241,29 +285,15 @@ wik.federate = (site, cb) ->
 
     io.makeFace params, responder
 
-wik.init = () ->
+wik.init = (func) ->
   cycle = () ->
     console.log "wik.self", wik.self()
 
     if wik.self() == undefined
-      $(".local").on "init", cycle
+      $(".local").on "init", func
       ""
     else
-      onPage = (page) ->
-        console.log "got page from self sitemap"
-        for action in page.journal
-          if (action.site? && !wik.federation[action.site] && action.site != wik.self())
-            setTimeout wik.federate, 0 , action.site, ()->
-
-      onSitemapEntry = (entry) ->
-        pageInformation =
-          slug: entry.slug
-          site: wik.self()
-
-        wik.getPage(pageInformation, onPage, ()->)
-
-      wik.getSitemapEntries wik.self(), onSitemapEntry
+      func()
 
   cycle()
 
-setTimeout(wik.init, 100)

@@ -60,6 +60,7 @@ wiki.getScript = plugin.getScript
 wiki.getPlugin = plugin.getPlugin
 wiki.doPlugin = plugin.doPlugin
 wiki.registerPlugin = plugin.registerPlugin
+wiki.getCSS = plugin.getCSS
 
 # known use: wiki.getData  wiki-plugin-bars/client/bars.coffee:
 # known use: wiki.getData  wiki-plugin-calculator/client/calculator.coffee:
