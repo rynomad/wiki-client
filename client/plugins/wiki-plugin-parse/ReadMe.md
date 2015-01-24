@@ -1,2 +1,0 @@
-# Federated Wiki - Parse Plugin
-

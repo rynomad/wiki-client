@@ -1,4 +1,0 @@
-# Federated Wiki - FederatedWiki Plugin
-
-
-

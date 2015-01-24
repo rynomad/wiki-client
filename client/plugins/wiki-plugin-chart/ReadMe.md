@@ -1,3 +1,0 @@
-# Federated Wiki - Chart Plugin
-
-

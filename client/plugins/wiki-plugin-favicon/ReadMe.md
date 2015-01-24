@@ -1,4 +1,0 @@
-# Federated Wiki - Favicon Plugin
-
-
-
