@@ -1,0 +1,55 @@
+{
+    "name": "Wiki",
+    "description": "Wiki - For dealing with '.wik's",
+    "version": "1.0.0",
+    "icons":{
+    },
+    "manifest_version": 2,
+    "page_action":{
+      "default_popup":"index.html"
+    },
+    "permissions":[
+      "file://**/*.wik",
+      "http://*/",
+      "tabs",
+      "activeTab"
+    ],
+    "web_accessible_resources":[
+      "images/*.png",
+      "*.png",
+      "*.css",
+      "js/*.css",
+      "style/*.css",
+      "js/dist/*.*",
+      "js/images/*.png",
+      "chrome/*.js",
+      "*.map",
+      "*.max.*",
+      "plugins/wiki-plugin-*/client/*.js",
+      "node_modules/wiki-client/client/*.*"
+    ],
+    "background": {
+      "scripts": ["js/jquery-1.9.1.min.js","chrome/steward.js", "chrome/tabs.js"]
+    },
+    "content_scripts": [
+      {
+        "matches": ["file://**/*.wik"],
+        "css": ["js/jquery-ui-1.10.1.custom.chrome.min.css","/style.chrome.css"],
+        "js":[
+          "js/jquery-1.9.1.min.js",
+          "js/jquery-migrate-1.1.1.min.js",
+          "js/jquery-ui-1.10.1.custom.min.js",
+          "js/underscore-min.js",
+          "chrome/bootStrap.js",
+          "client.chromeExtension.js"
+        ]
+      },
+      {
+        "matches": ["http://*/"],
+        "js":[
+          "chrome/checkWiki.js"
+        ]
+      }
+    ],
+    "offline_enabled": true
+}

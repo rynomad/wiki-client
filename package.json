@@ -25,7 +25,8 @@
     }
   ],
   "dependencies": {
-    "underscore": "*"
+    "underscore": "*",
+    "dropkick": "*"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -41,7 +42,8 @@
     "grunt-contrib-watch": "~0.6",
     "grunt-mocha-test": "~0.10",
     "grunt-contrib-clean": "~0.5",
-    "grunt-contrib-uglify": "^0.4.0"
+    "grunt-contrib-uglify": "^0.4.0",
+    "dropkick": "^0.1.1"
   },
   "license": "MIT",
   "repository": {

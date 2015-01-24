@@ -33,4 +33,3 @@ active.set = ($page) ->
   $page = $($page)
   $(".active").removeClass("active")
   scrollTo $page.addClass("active")
-

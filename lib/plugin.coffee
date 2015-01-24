@@ -1,5 +1,6 @@
 # The plugin module manages the dynamic retrieval of plugin
 # javascript including additional scripts that may be requested.
+Steward = require './steward'
 
 module.exports = plugin = {}
 
@@ -13,28 +14,27 @@ escape = (s) ->
     .replace(/\//g,'&#x2F;')
 
 # define cachedScript that allows fetching a cached script.
-# see example in http://api.jquery.com/jQuery.getScript/ 
+# see example in http://api.jquery.com/jQuery.getScript/
 
-cachedScript = (url, options) ->
+cachedScript = (url, callback) ->
   options = $.extend(options or {},
     dataType: "script"
     cache: true
     url: url
   )
-  $.ajax options
+  Steward.get("script", options, (err)->
+    if (!err)
+      scripts.push url
+    callback()
+    )
 
 scripts = []
 getScript = plugin.getScript = (url, callback = () ->) ->
   # console.log "URL :", url, "\nCallback :", callback
   if url in scripts
     callback()
-  else 
-    cachedScript(url)
-      .done ->
-        scripts.push url
-        callback()
-      .fail ->
-        callback()
+  else
+    cachedScript(url, callback)
 
 plugin.get = plugin.getPlugin = (name, callback) ->
   return callback(window.plugins[name]) if window.plugins[name]
@@ -66,7 +66,7 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
           href="http://plugins.fed.wiki.org/about-plugins.html"
           title="http://plugins.fed.wiki.org/about-plugins.html">
             About Plugins
-            <img src="/images/external-link-ltr-icon.png">
+            <img src="http://plugins.fed.wiki.org/images/external-link-ltr-icon.png">
           </a>
         </p>
       """

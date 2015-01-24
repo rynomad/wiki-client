@@ -63,10 +63,10 @@ state.show = (e) ->
   document.title = lineup.bestTitle()
 
 state.first = ->
-  state.setUrl()
+  #state.setUrl()
+  console.log "state first?"
   firstUrlPages = state.urlPages()
   firstUrlLocs = state.urlLocs()
   oldPages = state.pagesInDom()
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
     link.createPage(urlPage, firstUrlLocs[idx]) unless urlPage is ''
-

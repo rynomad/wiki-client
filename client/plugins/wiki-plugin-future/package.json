@@ -1,0 +1,46 @@
+{
+  "name": "wiki-plugin-future",
+  "version": "0.1.1",
+  "description": "Federated Wiki - Future Plug-in",
+  "keywords": [
+    "wiki",
+    "federated wiki",
+    "plugin"
+  ],
+  "author": {
+    "name": "Ward Cunningham",
+    "email": "ward@c2.com",
+    "url": "http://ward.fed.wiki.org"
+  },
+  "contributors": [
+    {
+      "name": "Nick Niemeir",
+      "email": "nick.niemeir@gmail.com",
+      "url": "http://nrn.io"
+    },
+    {
+      "name": "Paul Rodwell",
+      "email": "paul.rodwell@btinternet.com",
+      "url": "http://wiki-paul90.rhcloud.com"
+    }
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fedwiki/wiki-plugin-future.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedwiki/wiki-plugin-future/issues"
+  },
+  "engines": {
+    "node": "0.10"
+  },
+  "readme": "# Federated Wiki - Future Plugin\r\n\r\nThe Future plugin stands-in for a page about to be created. When one links to a non-existant page a temporary (ghost) page is created containing the Future plugin. The Future plugin creates new pages much like the Factory plugin creates new story items.\r\n",
+  "readmeFilename": "ReadMe.md",
+  "homepage": "https://github.com/fedwiki/wiki-plugin-future",
+  "_id": "wiki-plugin-future@0.1.1",
+  "_from": "wiki-plugin-future@0.1"
+}

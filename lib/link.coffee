@@ -6,6 +6,7 @@
 lineup = require './lineup'
 active = require './active'
 refresh = require './refresh'
+Steward = require './steward'
 {asSlug, pageEmitter} = require './page'
 
 createPage = (name, loc) ->
@@ -14,10 +15,15 @@ createPage = (name, loc) ->
     <div class="page" id="#{name}">
       <div class="twins"> <p> </p> </div>
       <div class="header">
-        <h1> <img class="favicon" src="#{ if site then "//#{site}" else "" }/favicon.png" height="32px"> #{name} </h1>
+        <h1> <img class="favicon" src="" height="32px"> #{name} </h1>
       </div>
     </div>
   """
+  Steward.get('favicon',
+    remote: site
+  , (err, res)->
+    $page.find(".favicon").attr("src", res.favicon)
+    )
   $page.data('site', site) if site
   $page
 

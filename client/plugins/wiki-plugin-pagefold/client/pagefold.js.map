@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "pagefold.js",
+  "sourceRoot": "",
+  "sources": [
+    "pagefold.coffee"
+  ],
+  "names": [],
+  "mappings": "AAEA;CAAA,KAAA,IAAA;;CAAA,CAAA,CAAO,CAAP,CAAO,IAAC;CACD,EAGF,CAAI,CAHH,CAAL,KAAA,gBAAA,kOAAgB;CADjB,EAAO;;CAAP,CASA,CAAO,CAAP,CAAO,IAAC;CACD,EAAS,EAAV,GAAL,CAAe,EAAf;CAAuB,CAAkB,EAAnB,CAAJ,KAAA,GAAA;CAAlB,IAAe;CAVhB,EASO;;CATP,CAYA,CAA0B,GAApB,CAAQ,CAAd;CAA0B,CAAC,EAAA;CAAD,CAAO,EAAA;CAZjC,GAAA;CAAA"
+}

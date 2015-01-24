@@ -5,6 +5,7 @@
 
 editor = require './editor'
 resolve = require './resolve'
+Steward = require './steward'
 
 # see http://fed.wiki.org/about-reference-plugin.html
 
@@ -15,7 +16,7 @@ emit = ($item, item) ->
     $item.append """
       <p style='margin-bottom:3px;'>
         <img class='remote'
-          src='//#{site}/favicon.png'
+          src=''
           title='#{site}'
           data-site="#{site}"
           data-slug="#{slug}"
@@ -26,6 +27,13 @@ emit = ($item, item) ->
         #{resolve.resolveLinks(item.text)}
       </div>
     """
+    Steward.get("favicon",
+      remote: site
+    ,(err, res)->
+      console.log("favicon callback in reference",err, res)
+      $item.find(".remote").attr("src", res.favicon)
+      )
+    $item
 bind = ($item, item) ->
   $item.dblclick -> editor.textEditor $item, item
 

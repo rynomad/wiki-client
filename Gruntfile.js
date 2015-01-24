@@ -29,6 +29,32 @@ module.exports = function (grunt) {
           }
         }
       },
+      packageChrome: {
+        src: ['./client.coffee'],
+        dest: 'client/client.chromeExtension.max.js',
+        options: {
+
+          alias:["./lib/chrome/state.coffee:./state"
+            , "./lib/chrome/steward.coffee:./steward"
+            , "./lib/chrome/resolve.coffee:./lib/resolve.coffee"
+            , "./lib/chrome/dropkick.coffee:./dropkick"
+          ],
+          transform: ['coffeeify'],
+          browserifyOptions: {
+            extensions: ".coffee"
+          }
+        }
+      },
+      packageInjected: {
+        src: ['./client/chrome/dropkick.coffee'],
+        dest: "client/chrome/dropkick.js",
+        options:{
+          transform:['coffeeify'],
+          browserifyOptions:{
+            extensions: ".coffee"
+          }
+        }
+      },
       // build for local development version of the client will go here (once mapfile issues are resolved)
 
       // build the browser testclient
@@ -46,7 +72,7 @@ module.exports = function (grunt) {
 
     uglify: {
       packageClient: {
-        // uglify the client version for including in the NPM package, 
+        // uglify the client version for including in the NPM package,
         //   create a map so at least if needed we can get back to the generated javascript
         //   uglified version is 'client.js', so we don't need changes elsewhere.
         options: {
@@ -57,6 +83,17 @@ module.exports = function (grunt) {
         },
         files: {
           'client/client.js': ['client/client.max.js']
+        }
+      },
+      packageChrome: {
+        options:{
+          sourceMap:true,
+          sourceMapName: "client/client.chromeExtension.map",
+          banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                  '<%= grunt.template.today("yyyy-mm-dd") %> */'
+        },
+        files: {
+          'client/client.chromeExtension.js': ['client/client.chromeExtension.max.js']
         }
       }
     },
@@ -88,10 +125,9 @@ module.exports = function (grunt) {
   });
 
   // build without sourcemaps
-  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'uglify:packageClient']);
-  
+  grunt.registerTask('build', ['clean',  'browserify:packageClient', 'browserify:packageChrome', 'browserify:testClient', 'uglify:packageClient', 'uglify:packageChrome']);
+
   // the default is to do the production build.
   grunt.registerTask('default', ['build']);
 
 };
-

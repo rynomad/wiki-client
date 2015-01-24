@@ -46,10 +46,13 @@ newPage = (json, site) ->
     page.plugin?
 
   isRemote = ->
-    ! (site in [undefined, null, 'view', 'origin', 'local'])
+    ! (site in [undefined, null, 'view', 'origin', 'local', 'extension'])
 
   isLocal = ->
     site == 'local'
+
+  isExtension = ->
+    site == 'extension'
 
   getRemoteSite = (host = null) ->
     if isRemote() then site else host
@@ -153,6 +156,6 @@ newPage = (json, site) ->
     revision.apply page, action
     site = null if action.site
 
-  {getRawPage, getContext, isPlugin, isRemote, isLocal, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply}
+  {getRawPage, getContext, isPlugin, isRemote, isLocal, isExtension, getRemoteSite, getRemoteSiteDetails, getSlug, getNeighbors, getTitle, setTitle, getRevision, getTimestamp, addItem, addParagraph, seqItems, seqActions, become, siteLineup, merge, apply}
 
 module.exports = {newPage, asSlug, pageEmitter}

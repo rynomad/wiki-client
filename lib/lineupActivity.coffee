@@ -1,6 +1,7 @@
 # Compare journal activity for pages in the current lineup.
 
 lineup = require './lineup'
+Steward = require './steward'
 
 day = 24 * hour = 60 * minute = 60 * second = 1000
 
@@ -21,9 +22,16 @@ sparks = (journal) ->
 row = (page) ->
   remote = page.getRemoteSite location.host
   title = page.getTitle()
+  Steward.get("favicon",
+    remote: remote
+  , (err, res)->
+    console.log("error here?", res.favicon)
+    console.log($(".remote #{remote}"))
+    $("img[data-site='#{remote}']").attr("src", res.favicon)
+  )
   """
     <tr><td align=right>
-      <img class="remote" src="//#{remote}/favicon.png">
+      <img data-site="#{remote}" class="remote" src="">
       #{title}
     <td>
       #{sparks page.getRawPage().journal}
@@ -32,7 +40,7 @@ row = (page) ->
 table = (keys) ->
   """
     <table>
-    #{(row lineup.atKey key for key in keys).join "\n"}
+    #{(row lineup.atKey key for key in keys).join "<br>"}
     </table>
   """
 

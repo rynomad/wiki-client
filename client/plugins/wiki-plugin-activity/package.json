@@ -1,0 +1,51 @@
+{
+  "name": "wiki-plugin-activity",
+  "version": "0.1.1",
+  "description": "Federated Wiki - Activity Plug-in",
+  "keywords": [
+    "wiki",
+    "federated wiki",
+    "plugin"
+  ],
+  "author": {
+    "name": "Ward Cunningham",
+    "email": "ward@c2.com",
+    "url": "http://ward.fed.wiki.org"
+  },
+  "contributors": [
+    {
+      "name": "Nick Niemeir",
+      "email": "nick.niemeir@gmail.com",
+      "url": "http://nrn.io"
+    },
+    {
+      "name": "Paul Rodwell",
+      "email": "paul.rodwell@btinternet.com",
+      "url": "http://wiki-paul90.rhcloud.com"
+    }
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.x",
+    "grunt-contrib-coffee": "~0.7.x",
+    "grunt-contrib-watch": "~0.5.x"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fedwiki/wiki-plugin-activity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedwiki/wiki-plugin-activity/issues"
+  },
+  "engines": {
+    "node": "0.10"
+  },
+  "readme": "# Federated Wiki - Activity Plugin\r\n\r\nThe Activity plugin lists pages in your neighborhood. It expand as your neighborhood grows. \r\nPage names used on multiple sites are grouped together with the most current site listed first.",
+  "readmeFilename": "ReadMe.md",
+  "homepage": "https://github.com/fedwiki/wiki-plugin-activity",
+  "_id": "wiki-plugin-activity@0.1.1",
+  "_from": "wiki-plugin-activity@0.1"
+}

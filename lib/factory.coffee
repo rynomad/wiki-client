@@ -9,6 +9,7 @@ pageHandler = require './pageHandler'
 editor = require './editor'
 synopsis = require './synopsis'
 drop = require './drop'
+Steward = require './steward'
 
 emit = ($item, item) ->
   $item.append '<p>Double-Click to Edit<br>Drop Text or Image to Insert</p>'
@@ -39,7 +40,7 @@ emit = ($item, item) ->
   else if window.catalog?
     showMenu()
   else
-    $.getJSON '/system/factories.json', (data) ->
+    Steward.get 'factories',null, (err,data)->
       window.catalog = data
       showMenu()
 
@@ -66,13 +67,18 @@ bind = ($item, item) ->
     syncEditAction()
 
   addReference = (data) ->
-    $.getJSON "http://#{data.site}/#{data.slug}.json", (remote) ->
-      item.type = 'reference'
-      item.site = data.site
-      item.title = remote.title || data.slug
-      item.text = synopsis remote
-      syncEditAction()
-      neighborhood.registerNeighbor item.site if item.site?
+    Steward.get("page",
+      pageInformation:
+        site: data.site
+        slug: data.slug
+      whenGotten: (pageObject)->
+        item.type = 'reference'
+        item.site = data.site
+        item.title = pageObject.getTitle() || data.slug
+        item.text = synopsis remote
+        syncEditAction()
+        neighborhood.registerNeighbor item.site if item.site?
+    )
 
   addVideo = (video) ->
     item.type = 'video'

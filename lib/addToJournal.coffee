@@ -4,6 +4,7 @@
 
 util = require './util'
 actionSymbols = require './actionSymbols'
+Steward = require("./steward")
 
 module.exports = ($journal, action) ->
   $page = $journal.parents('.page:first')
@@ -20,9 +21,12 @@ module.exports = ($journal, action) ->
   else
     $action.appendTo($journal)
   if action.type == 'fork' and action.site?
+    Steward.get("favicon",{remote: action.site}, (err, res)->
+      $action
+        .css("background-image", res.favicon)
+      )
     $action
-      .css("background-image", "url(//#{action.site}/favicon.png)")
-      .attr("href", "//#{action.site}/#{$page.attr('id')}.html")
+      .attr("href", "http://#{action.site}/#{$page.attr('id')}.html")
       .data("site", action.site)
       .data("slug", $page.attr('id'))
 

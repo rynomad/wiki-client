@@ -12,8 +12,6 @@ drop = require './drop'
 dialog = require './dialog'
 link = require './link'
 
-asSlug = require('./page').asSlug
-
 $ ->
   dialog.emit()
 
@@ -180,4 +178,3 @@ $ ->
     state.first()
     $('.page').each refresh.cycle
     active.set($('.page').last())
-

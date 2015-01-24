@@ -23,6 +23,7 @@ actionSymbols = require './actionSymbols'
 lineup = require './lineup'
 resolve = require './resolve'
 random = require './random'
+Steward = require './steward'
 
 pageModule = require('./page')
 newPage = pageModule.newPage
@@ -126,13 +127,23 @@ handleHeaderClick = (e) ->
 emitHeader = ($header, $page, pageObject) ->
   remote = pageObject.getRemoteSite location.host
   tooltip = pageObject.getRemoteSiteDetails location.host
+
   $header.append """
     <h1 title="#{tooltip}">
       <a href="#{pageObject.siteLineup()}">
-        <img src="//#{remote}/favicon.png" height="32px" class="favicon">
+        <img src="" height="32px" class="favicon">
       </a> #{pageObject.getTitle()}
     </h1>
   """
+
+  console.log remote
+  Steward.get('favicon', {remote: remote}, (err, res)->
+    console.log("header favicon callback",err, res, $header)
+    if (!err)
+      $header.find('img').attr('src', res.favicon)
+    else
+      console.log("error getting favicon", remote)
+  )
   $header.find('a').on 'click', handleHeaderClick
 
 emitTimestamp = ($header, $page, pageObject) ->
@@ -188,14 +199,22 @@ emitTwins = ($page) ->
       continue unless bin.length
       bin.sort (a,b) ->
         a.item.date < b.item.date
-      flags = for {remoteSite, item}, i in bin
+      flags = []
+      for {remoteSite, item}, i in bin
         break if i >= 8
-        """<img class="remote"
-          src="http://#{remoteSite}/favicon.png"
+        flags.push """<img class="remote"
+          src=""
           data-slug="#{slug}"
           data-site="#{remoteSite}"
           title="#{remoteSite}">
         """
+        Steward.get('favicon',
+          remote: remoteSite
+        , (err, res)->
+          console.log(err, res, remoteSite)
+          $page.find("[data-site='#{res.req.remote}']").attr('src', res.favicon)
+        )
+
       twins.push "#{flags.join '&nbsp;'} #{legend}"
     $page.find('.twins').html """<p>#{twins.join ", "}</p>""" if twins
 
@@ -235,10 +254,27 @@ renderPageIntoPageElement = (pageObject, $page) ->
 
 
 createMissingFlag = ($page, pageObject) ->
-  unless pageObject.isRemote()
-    $('img.favicon',$page).error ->
-      plugin.get 'favicon', (favicon) ->
-        favicon.create()
+
+  make = () ->
+    plugin.get 'favicon-alt', (favicon) ->
+      favicon.create (fav) ->
+        $('#favicon', $page).attr('href', fav)
+        $('.favicon', $page).attr('src', fav)
+        Steward.put("favicon",{favicon:fav})
+
+  if (!pageObject.isRemote() && $('img.favicon',$page).attr("src").indexOf("favicon.png") > 0)
+    $('img.favicon',$page).error ()->
+      if pageObject.isLocal()
+        console.log("this is where")
+        make()
+  else
+    setTimeout ->
+  	  if $("img.favicon", $page).attr("src") == "" && (pageObject.isLocal() || pageObject.isExtension())
+        make()
+        console.log("make here")
+
+
+    , 2000
 
 rebuildPage = (pageObject, $page) ->
   $page.addClass('local') if pageObject.isLocal()

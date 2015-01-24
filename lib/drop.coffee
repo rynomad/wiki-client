@@ -1,6 +1,8 @@
 # handle drops of wiki pages or thing that go on wiki pages
 # (we'll move decoding logic out of factory)
 
+require "./dropkick"
+
 isFile = (event) ->
   if (dt = event.originalEvent.dataTransfer)?
     if 'Files' in dt.types

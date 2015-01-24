@@ -3,6 +3,7 @@
 # slowly and keeps track of get requests in flight.
 
 _ = require 'underscore'
+Steward = require './steward'
 
 module.exports = neighborhood = {}
 
@@ -23,18 +24,17 @@ populateSiteInfoFor = (site,neighborInfo)->
   fetchMap = ->
     sitemapUrl = "http://#{site}/system/sitemap.json"
     transition site, 'wait', 'fetch'
-    request = $.ajax
-      type: 'GET'
-      dataType: 'json'
-      url: sitemapUrl
-    request
-      .always( -> neighborInfo.sitemapRequestInflight = false )
-      .done (data)->
-        neighborInfo.sitemap = data
+    Steward.get "sitemap",
+      site: site
+    , (err, sitemap)->
+      neighborInfo.sitemapRequestInflight = false
+      if (!err)
+        neighborInfo.sitemap = sitemap
         transition site, 'fetch', 'done'
         $('body').trigger 'new-neighbor-done', site
-      .fail (data)->
+      else
         transition site, 'fetch', 'fail'
+
 
   now = Date.now()
   if now > nextAvailableFetch
@@ -82,3 +82,7 @@ neighborhood.search = (searchQuery)->
   tally['msec'] = Date.now() - start
   { finds, tally }
 
+setTimeout ()->
+    if document.getElementsByTagName("title")[0].getAttribute("class") == "wiki-extension-enabled"
+      neighborhood.registerNeighbor "extension"
+  , 4000

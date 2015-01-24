@@ -4,6 +4,7 @@
 # cause them to animate as an indication of work in progress.
 
 link = require './link'
+Steward = require './steward'
 
 sites = null
 totalPages = 0
@@ -14,7 +15,7 @@ flag = (site) ->
   """
     <span class="neighbor" data-site="#{site}">
       <div class="wait">
-        <img src="http://#{site}/favicon.png" title="#{site}">
+        <img src="" title="#{site}">
       </div>
     </span>
   """
@@ -27,6 +28,13 @@ bind = ->
   $('body')
     .on 'new-neighbor', (e, site) ->
       $neighborhood.append flag site
+      Steward.get "favicon",
+        remote: site
+      , (err, res)->
+
+        img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')
+        img.attr('src', res.favicon)
+
     .on 'new-neighbor-done', (e, site) ->
       pageCount = sites[site].sitemap.length
       img = $(""".neighborhood .neighbor[data-site="#{site}"]""").find('img')

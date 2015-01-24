@@ -10,6 +10,7 @@ addToJournal = require './addToJournal'
 newPage = require('./page').newPage
 random = require './random'
 lineup = require './lineup'
+Steward = require './steward'
 
 module.exports = pageHandler = {}
 
@@ -25,66 +26,6 @@ pageFromLocalStorage = (slug)->
   else
     undefined
 
-recursiveGet = ({pageInformation, whenGotten, whenNotGotten, localContext}) ->
-  {slug,rev,site} = pageInformation
-
-  if site
-    localContext = []
-  else
-    site = localContext.shift()
-
-  site = 'origin' if site is window.location.host
-  site = null if site=='view'
-
-  if site?
-    if site == 'local'
-      if localPage = pageFromLocalStorage(pageInformation.slug)
-        #NEWPAGE local from pageHandler.get
-        return whenGotten newPage(localPage, 'local' )
-      else
-        return whenNotGotten()
-    else
-      if site == 'origin'
-        url = "/#{slug}.json"
-      else
-        url = "http://#{site}/#{slug}.json"
-  else
-    url = "/#{slug}.json"
-
-  $.ajax
-    type: 'GET'
-    dataType: 'json'
-    url: url + "?random=#{random.randomBytes(4)}"
-    success: (page) ->
-      page = revision.create rev, page if rev
-      #NEWPAGE server from pageHandler.get
-      return whenGotten newPage(page, site)
-    error: (xhr, type, msg) ->
-      if (xhr.status != 404) and (xhr.status != 0)
-        console.log 'pageHandler.get error', xhr, xhr.status, type, msg
-        #NEWPAGE trouble from PageHandler.get
-        troublePageObject = newPage {title: "Trouble: Can't Get Page"}, null
-        troublePageObject.addParagraph """
-The page handler has run into problems with this   request.
-<pre class=error>#{JSON.stringify pageInformation}</pre>
-The requested url.
-<pre class=error>#{url}</pre>
-The server reported status.
-<pre class=error>#{xhr.status}</pre>
-The error type.
-<pre class=error>#{type}</pre>
-The error message.
-<pre class=error>#{msg}</pre>
-These problems are rarely solved by reporting issues.
-There could be additional information reported in the browser's console.log.
-More information might be accessible by fetching the page outside of wiki.
-<a href="#{url}" target="_blank">try-now</a>
-"""
-        return whenGotten troublePageObject
-      if localContext.length > 0
-        recursiveGet( {pageInformation, whenGotten, whenNotGotten, localContext} )
-      else
-        whenNotGotten()
 
 pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 
@@ -95,7 +36,8 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 
   pageHandler.context = ['view'] unless pageHandler.context.length
 
-  recursiveGet
+  pageHandler.context.unshift(location.host)
+  Steward.get "page",
     pageInformation: pageInformation
     whenGotten: whenGotten
     whenNotGotten: whenNotGotten
@@ -104,44 +46,6 @@ pageHandler.get = ({whenGotten,whenNotGotten,pageInformation}  ) ->
 
 pageHandler.context = []
 
-pushToLocal = ($page, pagePutInfo, action) ->
-  if action.type == 'create'
-    page = {title: action.item.title, story:[], journal:[]}
-  else
-    page = pageFromLocalStorage pagePutInfo.slug
-    page ||= lineup.atKey($page.data('key')).getRawPage()
-    page.journal = [] unless page.journal?
-    if (site=action['fork'])?
-      page.journal = page.journal.concat({'type':'fork','site':site,'date':(new Date()).getTime()})
-      delete action['fork']
-  revision.apply page, action
-  localStorage[pagePutInfo.slug] = JSON.stringify(page)
-  addToJournal $page.find('.journal'), action
-  $page.addClass("local")
-
-pushToServer = ($page, pagePutInfo, action) ->
-
-  # bundle rawPage which server will strip out
-  bundle = deepCopy(action)
-  pageObject = lineup.atKey $page.data('key')
-  if action.type == 'fork'
-    bundle.item = deepCopy pageObject.getRawPage()
-
-  $.ajax
-    type: 'PUT'
-    url: "/page/#{pagePutInfo.slug}/action"
-    data:
-      'action': JSON.stringify(bundle)
-    success: () ->
-      # update pageObject (guard for tests)
-      pageObject.apply action if pageObject?.apply
-      addToJournal $page.find('.journal'), action
-      if action.type == 'fork' # push
-        localStorage.removeItem $page.attr('id')
-    error: (xhr, type, msg) ->
-      console.log "pageHandler.put ajax error callback", type, msg
-      action.error = {type, msg}
-      pushToLocal $page, pagePutInfo, action
 
 pageHandler.put = ($page, action) ->
 
@@ -162,7 +66,7 @@ pageHandler.put = ($page, action) ->
   console.log 'pageHandler.put', action, pagePutInfo
 
   # detect when fork to local storage
-  if pageHandler.useLocalStorage()
+  if Steward.useLocalStorage()
     if pagePutInfo.site?
       console.log 'remote => local'
     else if !pagePutInfo.local
@@ -180,7 +84,9 @@ pageHandler.put = ($page, action) ->
   # update dom when forking
   if forkFrom
     # pull remote site closer to us
-    $page.find('h1 img').attr('src', '/favicon.png')
+    Steward.get "favicon", {}, (err, res)->
+      $page.find('h1 img').attr('src', res.favicon)
+
     $page.find('h1 a').attr('href', '/')
     $page.data('site', null)
     $page.removeClass('remote')
@@ -195,7 +101,9 @@ pageHandler.put = ($page, action) ->
         date: action.date
 
   # store as appropriate
-  if pageHandler.useLocalStorage() or pagePutInfo.site == 'local'
-    pushToLocal($page, pagePutInfo, action)
-  else
-    pushToServer($page, pagePutInfo, action)
+  Steward.put "page",
+    page: $page
+    , pagePutInfo: pagePutInfo
+    , action : action
+  , ($page, action) ->
+      addToJournal($page.find('.journal'), action)

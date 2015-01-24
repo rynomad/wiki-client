@@ -1,0 +1,51 @@
+{
+  "name": "wiki-plugin-efficiency",
+  "version": "0.1.1",
+  "description": "Federated Wiki - Efficiency Plug-in",
+  "keywords": [
+    "wiki",
+    "federated wiki",
+    "plugin"
+  ],
+  "author": {
+    "name": "Ward Cunningham",
+    "email": "ward@c2.com",
+    "url": "http://ward.fed.wiki.org"
+  },
+  "contributors": [
+    {
+      "name": "Nick Niemeir",
+      "email": "nick.niemeir@gmail.com",
+      "url": "http://nrn.io"
+    },
+    {
+      "name": "Paul Rodwell",
+      "email": "paul.rodwell@btinternet.com",
+      "url": "http://wiki-paul90.rhcloud.com"
+    }
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.x",
+    "grunt-contrib-coffee": "~0.7.x",
+    "grunt-contrib-watch": "~0.5.x"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fedwiki/wiki-plugin-efficiency.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedwiki/wiki-plugin-efficiency/issues"
+  },
+  "engines": {
+    "node": "0.10"
+  },
+  "readme": "# Federated Wiki - Efficiency Plugin\r\n\r\nJim Goddard suggested computing pattern efficiency from cell phone photographs. Here we consider the operational and algorithmic requirements of such an application.\r\n",
+  "readmeFilename": "ReadMe.md",
+  "homepage": "https://github.com/fedwiki/wiki-plugin-efficiency",
+  "_id": "wiki-plugin-efficiency@0.1.1",
+  "_from": "wiki-plugin-efficiency@0.1"
+}
