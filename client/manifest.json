@@ -10,9 +10,7 @@
     },
     "permissions":[
       "file://**/*.wik",
-      "http://*/",
-      "tabs",
-      "activeTab"
+      "http://*/*"
     ],
     "web_accessible_resources":[
       "images/*.png",
@@ -29,23 +27,17 @@
       "node_modules/wiki-client/client/*.*"
     ],
     "background": {
-      "scripts": ["js/jquery-1.9.1.min.js","chrome/steward.js", "chrome/tabs.js"]
+      "scripts": ["js/jquery-1.9.1.min.js","chrome/steward.js"]
     },
     "content_scripts": [
       {
         "matches": ["file://**/*.wik"],
-        "css": ["js/jquery-ui-1.10.1.custom.chrome.min.css","/style.chrome.css"],
         "js":[
-          "js/jquery-1.9.1.min.js",
-          "js/jquery-migrate-1.1.1.min.js",
-          "js/jquery-ui-1.10.1.custom.min.js",
-          "js/underscore-min.js",
-          "chrome/bootStrap.js",
-          "client.chromeExtension.js"
+          "chrome/bootStrap.js"
         ]
       },
       {
-        "matches": ["http://*/"],
+        "matches": ["http://*/*"],
         "js":[
           "chrome/checkWiki.js"
         ]
