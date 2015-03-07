@@ -1,0 +1,34 @@
+{
+    "name": "Wiki",
+    "description": "Wiki - For dealing with '.wik's",
+    "version": "1.0.0",
+    "icons":{
+    },
+    "manifest_version": 2,
+    "permissions":[
+      "file://**/*.wik",
+      "http://*/",
+      "tabs",
+      "activeTab"
+    ],
+    "web_accessible_resources":[
+      "images/*.png",
+      "*.png",
+      "*.css",
+      "js/*.css",
+      "style/*.css",
+      "js/dist/*.*",
+      "js/images/*.png",
+      "chrome/*.js",
+      "*.map",
+      "*.max.*",
+      "plugins/wiki-plugin-*/client/*.js",
+      "node_modules/wiki-client/client/*.*"
+    ],
+	"app": {
+	  "launch": {
+	    "local_path": "index.html"
+	  }
+	},
+    "offline_enabled": true
+}
