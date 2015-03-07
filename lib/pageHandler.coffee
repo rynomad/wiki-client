@@ -17,7 +17,7 @@ deepCopy = (object) ->
   JSON.parse JSON.stringify object
 
 pageHandler.useLocalStorage = ->
-  $(".login").length > 0
+  $(".login").length > 0 || location.protocol == "chrome-extension:"
 
 pageFromLocalStorage = (slug)->
   if json = localStorage.getItem(slug)
