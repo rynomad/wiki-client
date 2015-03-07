@@ -57,9 +57,8 @@ module.exports = function (grunt) {
           }
         }
       },
-      // build for local development version of the client will go here (once mapfile issues are resolved)
 
-      // build the browser testclient
+	  // build the browser testclient
       testClient: {
         src: ['./testclient.coffee'],
         dest: 'client/test/testclient.js',
@@ -69,7 +68,34 @@ module.exports = function (grunt) {
             extensions: ".coffee"
           }
         }
+      },
+      packageChrome: {
+        src: ['./client.coffee'],
+        dest: 'client/client.chromeExtension.max.js',
+        options: {
+
+          alias:["./lib/chrome/state.coffee:./state"
+            , "./lib/chrome/resolve.coffee:./lib/resolve.coffee"
+          ],
+          transform: ['coffeeify'],
+          browserifyOptions: {
+            extensions: ".coffee"
+          }
+        }
+      },
+      packageInjected: {
+        src: ['./client/chrome/dropkick.coffee'],
+        dest: "client/chrome/dropkick.js",
+        options:{
+          transform:['coffeeify'],
+          browserifyOptions:{
+            extensions: ".coffee"
+          }
+        }
       }
+      // build for local development version of the client will go here (once mapfile issues are resolved)
+
+      
     },
 
     uglify: {
@@ -88,6 +114,17 @@ module.exports = function (grunt) {
         },
         files: {
           'client/client.js': ['client/client.max.js']
+        }
+      },
+      packageChrome: {
+        options:{
+          sourceMap:true,
+          sourceMapName: "client/client.chromeExtension.map",
+          banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                  '<%= grunt.template.today("yyyy-mm-dd") %> */'
+        },
+        files: {
+          'client/client.chromeExtension.js': ['client/client.chromeExtension.max.js']
         }
       }
     },
@@ -138,7 +175,7 @@ module.exports = function (grunt) {
   });
 
   // build without sourcemaps
-  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify:packageClient', 'browserify:testClient', 'uglify:packageClient']);
+  grunt.registerTask('build', ['clean', 'mochaTest', 'browserify', 'uglify']);
 
   // the default is to do the production build.
   grunt.registerTask('default', ['build']);
