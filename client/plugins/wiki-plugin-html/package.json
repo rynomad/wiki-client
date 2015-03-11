@@ -1,0 +1,75 @@
+{
+  "name": "wiki-plugin-html",
+  "version": "0.2.2",
+  "description": "Federated Wiki - HTML Plug-in",
+  "keywords": [
+    "wiki",
+    "federated wiki",
+    "plugin"
+  ],
+  "author": {
+    "name": "Ward Cunningham",
+    "email": "ward@c2.com",
+    "url": "http://ward.fed.wiki.org"
+  },
+  "contributors": [],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "sanitize-caja": "*",
+    "coffeeify": "~1.0",
+    "grunt-browserify": "~3.2",
+    "grunt": "~0.4",
+    "grunt-contrib-coffee": "~0.12",
+    "grunt-contrib-watch": "~0.6",
+    "grunt-git-authors": "~2"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/fedwiki/wiki-plugin-html/blob/master/LICENSE.txt"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fedwiki/wiki-plugin-html.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedwiki/wiki-plugin-html/issues"
+  },
+  "engines": {
+    "node": "0.10"
+  },
+  "gitHead": "6cc981c524a07bb4117c7ef40703bea1fe6146a7",
+  "homepage": "https://github.com/fedwiki/wiki-plugin-html",
+  "_id": "wiki-plugin-html@0.2.2",
+  "_shasum": "13ad2524219d4d23fdc4312dae69c01ed63f2b5e",
+  "_from": "wiki-plugin-html@*",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "paul90",
+    "email": "paul.rodwell@btinternet.com"
+  },
+  "maintainers": [
+    {
+      "name": "paul90",
+      "email": "paul.rodwell@btinternet.com"
+    },
+    {
+      "name": "ward",
+      "email": "ward@c2.com"
+    },
+    {
+      "name": "nrn",
+      "email": "nick.niemeir@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "13ad2524219d4d23fdc4312dae69c01ed63f2b5e",
+    "tarball": "http://registry.npmjs.org/wiki-plugin-html/-/wiki-plugin-html-0.2.2.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/wiki-plugin-html/-/wiki-plugin-html-0.2.2.tgz"
+}

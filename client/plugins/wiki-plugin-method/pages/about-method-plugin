@@ -1,0 +1,1509 @@
+{
+  "title": "About Method Plugin",
+  "story": [
+    {
+      "type": "paragraph",
+      "id": "df8885c094fc1710",
+      "text": "The Method plugin keeps a running tally of calculations expressed as a series of lines. "
+    },
+    {
+      "type": "method",
+      "id": "682d22af9d46f3a5",
+      "text": "2\n3\nSUM"
+    },
+    {
+      "type": "paragraph",
+      "id": "cd9bdca1991d8090",
+      "text": "See [[Bottles of Beer Methods]] for examples."
+    },
+    {
+      "type": "paragraph",
+      "id": "942ad9155083e706",
+      "text": "See [https://github.com/fedwiki/wiki-plugin-method GitHub] for plugin source."
+    },
+    {
+      "type": "paragraph",
+      "id": "c6c02f7fae9f4f03",
+      "text": "<h3>Lines"
+    },
+    {
+      "type": "paragraph",
+      "id": "c5af6f487a7b9907",
+      "text": "The first few characters determine how a line of a method is interpreted."
+    },
+    {
+      "type": "paragraph",
+      "id": "bbcc1f9548618bb4",
+      "text": "A line starting with <b>digits</b> defines a value and contributes that value to the contribution."
+    },
+    {
+      "type": "paragraph",
+      "id": "aec640909082f3b3",
+      "text": "A line starting with <b>words</b> retrieves that value from nearby datasets and contributes it to the computation."
+    },
+    {
+      "type": "paragraph",
+      "id": "f982813c60a78119",
+      "text": "A line starting with <b>all-caps</b> calls out a computation to be applied to previous contributions."
+    },
+    {
+      "type": "paragraph",
+      "id": "9b5e3d7a7cc65329",
+      "text": "Defined values and computation results are available to subsequent methods by the name that follows on the remainder of the line."
+    },
+    {
+      "type": "paragraph",
+      "id": "8519d81d9328a3e1",
+      "text": "<h3> Units"
+    },
+    {
+      "type": "paragraph",
+      "id": "4968dfe1c5eeef2f",
+      "text": "When the name of a defined value includes parenthesized words, these words are interpreted as units."
+    },
+    {
+      "type": "method",
+      "id": "272daa7fa38d7f96",
+      "text": "12 converts to (inches) from (feet)\n3 converts to (feet) from (yards)"
+    },
+    {
+      "type": "paragraph",
+      "id": "8e0f628fb3aef156",
+      "text": "Some unit conversions can be applied automatically."
+    },
+    {
+      "type": "method",
+      "id": "dadb1d9bccf7b8ec",
+      "text": "90 (inches)\n9 (feet)\nSUM (yards) total"
+    },
+    {
+      "type": "paragraph",
+      "id": "79c2fa20baa8fe70",
+      "text": "See [[Method Unit Conversions]] for more examples."
+    },
+    {
+      "type": "paragraph",
+      "id": "69084bb462636274",
+      "text": "<h3>Computations"
+    },
+    {
+      "type": "paragraph",
+      "id": "f3532c800d9b42ba",
+      "text": "All computations are defined in the <i>apply</i> function inside the method plugin. This limits the things you can say to compute."
+    },
+    {
+      "type": "paragraph",
+      "id": "0c61adb097e329f2",
+      "text": "Say <b>SUM</b> to sum the previous contributions."
+    },
+    {
+      "type": "paragraph",
+      "id": "641952825d9a9aae",
+      "text": "Say <b>PRODUCT</b> to multiply the previous contributions."
+    },
+    {
+      "type": "paragraph",
+      "id": "5072042a5e1ddf59",
+      "text": "Say <b>AVERAGE</b> to average the previous contributions."
+    },
+    {
+      "type": "paragraph",
+      "id": "760060c9bbaee23f",
+      "text": "Say <b>MINIUM</b> or <b>MAXIUM</b> to find extremes."
+    },
+    {
+      "type": "paragraph",
+      "id": "efe879fb582668e9",
+      "text": "Say <b>RATIO</b> to find the ratio of two numbers."
+    },
+    {
+      "type": "paragraph",
+      "id": "f14032666eff5947",
+      "text": "Say <b>ACCUMULATE</b> to add to a running sum."
+    },
+    {
+      "type": "paragraph",
+      "id": "38d211f128c7e310",
+      "text": "Say AVG, MIN or MAX as an acceptable abbreviation."
+    },
+    {
+      "type": "paragraph",
+      "id": "3461b41cc070b51a",
+      "text": "See [[Method Expressions]] for concise formulas."
+    },
+    {
+      "type": "method",
+      "id": "79c19bfe4976f0d2",
+      "text": "650 (miles)\n9.5 (hours)\nRATIO\nSHOW Average Speed"
+    },
+    {
+      "type": "paragraph",
+      "id": "56356deed9dd765e",
+      "text": "Say <b>SHOW</b> to display specific results in large digits while hiding other calculatons. (SHOW is otherwise like SUM)"
+    },
+    {
+      "type": "paragraph",
+      "id": "2c50f66172992a44",
+      "text": "<h3> Application"
+    },
+    {
+      "type": "paragraph",
+      "id": "fea9217615c7dda2",
+      "text": "The Method plugin exposes its computations such that they can be applied to new values by other plugins."
+    },
+    {
+      "type": "paragraph",
+      "id": "36d2fe7c36cc2fcf",
+      "text": "See [[About Rollup Plugin]] to see how calculations contributing to a dataset can be broken down into Methods on pages and then rolled back up to make a revised dataset."
+    },
+    {
+      "type": "paragraph",
+      "id": "31056889cde13ac0",
+      "text": "See [[About Reduce Plugin]] to see how calculation on a specified sequence of pages can be treated as a whole and evaluated repeatedly as such."
+    },
+    {
+      "type": "paragraph",
+      "id": "e37cccee0e49821a",
+      "text": "<h3> Programming"
+    },
+    {
+      "type": "paragraph",
+      "id": "bb9c2304a9526427",
+      "text": "Additional computations may be added as needed by programmers for use on a specific site."
+    },
+    {
+      "type": "paragraph",
+      "id": "c723cceb207630d0",
+      "text": "The plugin's <i>apply</i> function recognizes computations by name and performs the appropriate computation."
+    },
+    {
+      "type": "code",
+      "id": "d17103da4b9a4d55",
+      "text": "apply = (name, list, label) ->\n  switch name\n    when 'SUM' then sum list\n    when 'AVG', 'AVERAGE' then avg list\n    when 'MIN', 'MINIMUM' then _.min list\n    when 'MAX', 'MAXIMUM' then _.max list\n    when 'FIRST' then list[0]\n    when 'PRODUCT' then _.reduce list, (p,n)->p*=n\n    when 'LOOKUP' then lookup list\n    when 'POLYNOMIAL' then polynomial list[0], label\n    else throw new Error \"don't know how to #{name}\""
+    }
+  ],
+  "journal": [
+    {
+      "type": "create",
+      "id": "4e4c68f08db85513",
+      "item": {
+        "title": "About Method Plugin"
+      },
+      "date": 1342299574825
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "df8885c094fc1710"
+      },
+      "id": "df8885c094fc1710",
+      "type": "add",
+      "date": 1342299623556
+    },
+    {
+      "type": "edit",
+      "id": "df8885c094fc1710",
+      "item": {
+        "type": "paragraph",
+        "id": "df8885c094fc1710",
+        "text": "The Method plugin keeps a running tally of calculations expressed as a series of lines. "
+      },
+      "date": 1342299755963
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "c5af6f487a7b9907",
+        "text": "The first few characters determine how a line of a method is interpreted."
+      },
+      "after": "df8885c094fc1710",
+      "id": "c5af6f487a7b9907",
+      "date": 1342299808946
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "bbcc1f9548618bb4",
+        "text": "A line starting with <b>digits</b> defines a value and contributes that value to the contribution."
+      },
+      "after": "c5af6f487a7b9907",
+      "id": "bbcc1f9548618bb4",
+      "date": 1342299813219
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "aec640909082f3b3",
+        "text": "A line starting with <b>words</b> retrieves that value from nearby datasets and contributes it to the computation."
+      },
+      "after": "bbcc1f9548618bb4",
+      "id": "aec640909082f3b3",
+      "date": 1342299816951
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "f982813c60a78119",
+        "text": "A line starting with <b>all-caps</b> calls out a computation to be applied to previous contributions."
+      },
+      "after": "aec640909082f3b3",
+      "id": "f982813c60a78119",
+      "date": 1342299820710
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "69084bb462636274"
+      },
+      "id": "69084bb462636274",
+      "type": "add",
+      "after": "f982813c60a78119",
+      "date": 1342299854521
+    },
+    {
+      "type": "edit",
+      "id": "69084bb462636274",
+      "item": {
+        "type": "paragraph",
+        "id": "69084bb462636274",
+        "text": "<h3>Functions"
+      },
+      "date": 1342299862952
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "c503148a4552be44",
+        "text": ""
+      },
+      "id": "c503148a4552be44",
+      "type": "add",
+      "after": "69084bb462636274",
+      "date": 1342299863458
+    },
+    {
+      "type": "remove",
+      "id": "c503148a4552be44",
+      "date": 1342299872239
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "f3532c800d9b42ba",
+        "text": "All computations are defined in the <i>apply</i> function inside the method plugin. This limits the things you can say to compute."
+      },
+      "after": "69084bb462636274",
+      "id": "f3532c800d9b42ba",
+      "date": 1342299877382
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "0c61adb097e329f2",
+        "text": "Say <b>SUM</b> to sum the previous contributions."
+      },
+      "after": "f3532c800d9b42ba",
+      "id": "0c61adb097e329f2",
+      "date": 1342299880545
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "paragraph",
+        "id": "5072042a5e1ddf59",
+        "text": "Say <b>AVG</b> to average the previous contributions."
+      },
+      "after": "0c61adb097e329f2",
+      "id": "5072042a5e1ddf59",
+      "date": 1342299884412
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "c6c02f7fae9f4f03",
+        "text": ""
+      },
+      "id": "c6c02f7fae9f4f03",
+      "type": "add",
+      "after": "df8885c094fc1710",
+      "date": 1342299906950
+    },
+    {
+      "type": "edit",
+      "id": "c6c02f7fae9f4f03",
+      "item": {
+        "type": "paragraph",
+        "id": "c6c02f7fae9f4f03",
+        "text": "<h3>Lines"
+      },
+      "date": 1342299938286
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "method",
+        "id": "682d22af9d46f3a5",
+        "text": "2\n3\nSUM"
+      },
+      "after": "df8885c094fc1710",
+      "id": "682d22af9d46f3a5",
+      "date": 1342300170634
+    },
+    {
+      "type": "edit",
+      "id": "69084bb462636274",
+      "item": {
+        "type": "paragraph",
+        "id": "69084bb462636274",
+        "text": "<h3>Computations"
+      },
+      "date": 1342300258893
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "9b5e3d7a7cc65329",
+        "text": ""
+      },
+      "id": "9b5e3d7a7cc65329",
+      "type": "add",
+      "after": "f982813c60a78119",
+      "date": 1342300265324
+    },
+    {
+      "type": "edit",
+      "id": "9b5e3d7a7cc65329",
+      "item": {
+        "type": "paragraph",
+        "id": "9b5e3d7a7cc65329",
+        "text": "Defined values and computation results are available to subsequent methods by the name that follow on the remainder of the line."
+      },
+      "date": 1342300385888
+    },
+    {
+      "type": "edit",
+      "id": "9b5e3d7a7cc65329",
+      "item": {
+        "type": "paragraph",
+        "id": "9b5e3d7a7cc65329",
+        "text": "Defined values and computation results are available to subsequent methods by the name that follows on the remainder of the line."
+      },
+      "date": 1342300466198
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "cd9bdca1991d8090"
+      },
+      "id": "cd9bdca1991d8090",
+      "type": "add",
+      "after": "5072042a5e1ddf59",
+      "date": 1342300499728
+    },
+    {
+      "type": "edit",
+      "id": "cd9bdca1991d8090",
+      "item": {
+        "type": "paragraph",
+        "id": "cd9bdca1991d8090",
+        "text": "<h3>Examples"
+      },
+      "date": 1342300511686
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "08ff531bbe482a54",
+        "text": ""
+      },
+      "id": "08ff531bbe482a54",
+      "type": "add",
+      "after": "cd9bdca1991d8090",
+      "date": 1342300512190
+    },
+    {
+      "type": "remove",
+      "id": "08ff531bbe482a54",
+      "date": 1342300531227
+    },
+    {
+      "type": "edit",
+      "id": "cd9bdca1991d8090",
+      "item": {
+        "type": "paragraph",
+        "id": "cd9bdca1991d8090",
+        "text": "See [[Bottles of Beer Methods]] for examples."
+      },
+      "date": 1342300620922
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "5072042a5e1ddf59"
+      ],
+      "id": "cd9bdca1991d8090",
+      "date": 1342300642257
+    },
+    {
+      "type": "edit",
+      "id": "cd9bdca1991d8090",
+      "item": {
+        "type": "paragraph",
+        "id": "cd9bdca1991d8090",
+        "text": "See [[Bottles of Beer Methods]] for examples, see [https://github.com/WardCunningham/Smallest-Federated-Wiki/tree/master/client/plugins/method GitHub] for plugin source."
+      },
+      "date": 1342305418293
+    },
+    {
+      "type": "edit",
+      "id": "cd9bdca1991d8090",
+      "item": {
+        "type": "paragraph",
+        "id": "cd9bdca1991d8090",
+        "text": "See [[Bottles of Beer Methods]] for examples, [https://github.com/WardCunningham/Smallest-Federated-Wiki/tree/master/client/plugins/method GitHub] for plugin source."
+      },
+      "date": 1342305486675
+    },
+    {
+      "type": "edit",
+      "id": "cd9bdca1991d8090",
+      "item": {
+        "type": "paragraph",
+        "id": "cd9bdca1991d8090",
+        "text": "See [[Bottles of Beer Methods]] for examples."
+      },
+      "date": 1342305558939
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "942ad9155083e706",
+        "text": " [https://github.com/WardCunningham/Smallest-Federated-Wiki/tree/master/client/plugins/method GitHub] for plugin source."
+      },
+      "id": "942ad9155083e706",
+      "type": "add",
+      "after": "cd9bdca1991d8090",
+      "date": 1342305559445
+    },
+    {
+      "type": "edit",
+      "id": "942ad9155083e706",
+      "item": {
+        "type": "paragraph",
+        "id": "942ad9155083e706",
+        "text": "See [https://github.com/WardCunningham/Smallest-Federated-Wiki/tree/master/client/plugins/method GitHub] for plugin source."
+      },
+      "date": 1342305561842
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "760060c9bbaee23f",
+        "text": ""
+      },
+      "id": "760060c9bbaee23f",
+      "type": "add",
+      "after": "5072042a5e1ddf59",
+      "date": 1344191930217
+    },
+    {
+      "type": "edit",
+      "id": "760060c9bbaee23f",
+      "item": {
+        "type": "paragraph",
+        "id": "760060c9bbaee23f",
+        "text": "Say <b>MIN</b> or <b>MAX</b> to find extremes of the previous contributions."
+      },
+      "date": 1344191979175
+    },
+    {
+      "type": "edit",
+      "id": "760060c9bbaee23f",
+      "item": {
+        "type": "paragraph",
+        "id": "760060c9bbaee23f",
+        "text": "Say <b>MIN</b> or <b>MAX</b> to find extremes."
+      },
+      "date": 1344191997087
+    },
+    {
+      "type": "edit",
+      "id": "682d22af9d46f3a5",
+      "item": {
+        "type": "method",
+        "id": "682d22af9d46f3a5",
+        "text": "12\n3\nSUM"
+      },
+      "date": 1350073787249
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "641952825d9a9aae",
+        "text": ""
+      },
+      "id": "641952825d9a9aae",
+      "type": "add",
+      "after": "0c61adb097e329f2",
+      "date": 1350337439956
+    },
+    {
+      "type": "edit",
+      "id": "641952825d9a9aae",
+      "item": {
+        "type": "paragraph",
+        "id": "641952825d9a9aae",
+        "text": "Say <b>PRODUCT</b> to multiply the previous contributions."
+      },
+      "date": 1350337471490
+    },
+    {
+      "type": "edit",
+      "id": "5072042a5e1ddf59",
+      "item": {
+        "type": "paragraph",
+        "id": "5072042a5e1ddf59",
+        "text": "Say <b>AVERAGE</b> to average the previous contributions."
+      },
+      "date": 1350337485985
+    },
+    {
+      "type": "edit",
+      "id": "760060c9bbaee23f",
+      "item": {
+        "type": "paragraph",
+        "id": "760060c9bbaee23f",
+        "text": "Say <b>MINIUM</b> or <b>MAXIUM</b> to find extremes."
+      },
+      "date": 1350337504065
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "38d211f128c7e310",
+        "text": ""
+      },
+      "id": "38d211f128c7e310",
+      "type": "add",
+      "after": "760060c9bbaee23f",
+      "date": 1350337532025
+    },
+    {
+      "type": "edit",
+      "id": "38d211f128c7e310",
+      "item": {
+        "type": "paragraph",
+        "id": "38d211f128c7e310",
+        "text": "Say AVG, MIN or MAX as an acceptable abbreviation."
+      },
+      "date": 1350337592822
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "bb9c2304a9526427",
+        "text": ""
+      },
+      "id": "bb9c2304a9526427",
+      "type": "add",
+      "after": "38d211f128c7e310",
+      "date": 1350337611046
+    },
+    {
+      "type": "edit",
+      "id": "bb9c2304a9526427",
+      "item": {
+        "type": "paragraph",
+        "id": "bb9c2304a9526427",
+        "text": "Additional computations may be added as needed by a specific site. See the source code for examples."
+      },
+      "date": 1350337682020
+    },
+    {
+      "type": "edit",
+      "id": "682d22af9d46f3a5",
+      "item": {
+        "type": "method",
+        "id": "682d22af9d46f3a5",
+        "text": "2\n3\nSUM"
+      },
+      "date": 1350337943597
+    },
+    {
+      "type": "add",
+      "item": {
+        "type": "code",
+        "id": "d17103da4b9a4d55",
+        "text": "apply = (name, list, label) ->\n  switch name\n    when 'SUM' then sum list\n    when 'AVG', 'AVERAGE' then avg list\n    when 'MIN', 'MINIMUM' then _.min list\n    when 'MAX', 'MAXIMUM' then _.max list\n    when 'FIRST' then list[0]\n    when 'PRODUCT' then _.reduce list, (p,n)->p*=n\n    when 'LOOKUP' then lookup list\n    when 'POLYNOMIAL' then polynomial list[0], label\n    else throw new Error \"don't know how to #{name}\""
+      },
+      "after": "bb9c2304a9526427",
+      "id": "d17103da4b9a4d55",
+      "date": 1350338381303
+    },
+    {
+      "type": "edit",
+      "id": "bb9c2304a9526427",
+      "item": {
+        "type": "paragraph",
+        "id": "bb9c2304a9526427",
+        "text": "Additional computations may be added as needed by a specific site. See the source code above. The function <i>apply</i> recognizes computations by name and performs the appropriate computation."
+      },
+      "date": 1350338593882
+    },
+    {
+      "type": "edit",
+      "id": "bb9c2304a9526427",
+      "item": {
+        "type": "paragraph",
+        "id": "bb9c2304a9526427",
+        "text": "Additional computations may be added as needed by a specific site. See the source code above."
+      },
+      "date": 1350426326153
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "c723cceb207630d0",
+        "text": "The function <i>apply</i> recognizes computations by name and performs the appropriate computation."
+      },
+      "id": "c723cceb207630d0",
+      "type": "add",
+      "after": "bb9c2304a9526427",
+      "date": 1350426326660
+    },
+    {
+      "type": "edit",
+      "id": "c723cceb207630d0",
+      "item": {
+        "type": "paragraph",
+        "id": "c723cceb207630d0",
+        "text": "The plugin's <i>apply</i> function recognizes computations by name and performs the appropriate computation."
+      },
+      "date": 1350426422717
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "56356deed9dd765e",
+        "text": ""
+      },
+      "id": "56356deed9dd765e",
+      "type": "add",
+      "after": "38d211f128c7e310",
+      "date": 1350426445884
+    },
+    {
+      "type": "edit",
+      "id": "56356deed9dd765e",
+      "item": {
+        "type": "paragraph",
+        "id": "56356deed9dd765e",
+        "text": "<h3> Programming"
+      },
+      "date": 1350426577448
+    },
+    {
+      "type": "edit",
+      "id": "bb9c2304a9526427",
+      "item": {
+        "type": "paragraph",
+        "id": "bb9c2304a9526427",
+        "text": "Additional computations may be added as needed by programmers for use on a specific site. See the source code above."
+      },
+      "date": 1350426622751
+    },
+    {
+      "type": "edit",
+      "id": "bb9c2304a9526427",
+      "item": {
+        "type": "paragraph",
+        "id": "bb9c2304a9526427",
+        "text": "Additional computations may be added as needed by programmers for use on a specific site."
+      },
+      "date": 1350426636293
+    },
+    {
+      "type": "edit",
+      "id": "942ad9155083e706",
+      "item": {
+        "type": "paragraph",
+        "id": "942ad9155083e706",
+        "text": "See [https://github.com/fedwiki/wiki-plugin-method GitHub] for plugin source."
+      },
+      "date": 1389179214247
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "38d211f128c7e310",
+        "56356deed9dd765e",
+        "c723cceb207630d0",
+        "bb9c2304a9526427",
+        "d17103da4b9a4d55"
+      ],
+      "id": "c723cceb207630d0",
+      "date": 1389485515850
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "38d211f128c7e310",
+        "56356deed9dd765e",
+        "bb9c2304a9526427",
+        "c723cceb207630d0",
+        "d17103da4b9a4d55"
+      ],
+      "id": "c723cceb207630d0",
+      "date": 1389485544179
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "4968dfe1c5eeef2f",
+        "text": ""
+      },
+      "id": "4968dfe1c5eeef2f",
+      "type": "add",
+      "after": "9b5e3d7a7cc65329",
+      "date": 1389485612801
+    },
+    {
+      "type": "edit",
+      "id": "4968dfe1c5eeef2f",
+      "item": {
+        "type": "paragraph",
+        "id": "4968dfe1c5eeef2f",
+        "text": "When the name of a defined value includes parenthesized words, these words are interpreted as units.  "
+      },
+      "date": 1389485801191
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "272daa7fa38d7f96"
+      },
+      "id": "272daa7fa38d7f96",
+      "type": "add",
+      "after": "d17103da4b9a4d55",
+      "date": 1389485810022
+    },
+    {
+      "type": "edit",
+      "id": "272daa7fa38d7f96",
+      "item": {
+        "type": "method",
+        "id": "272daa7fa38d7f96",
+        "text": "12 converts to (inches) from (feet)\n3 converts to (feet) from (yards)"
+      },
+      "date": 1389486095017
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "4968dfe1c5eeef2f",
+        "272daa7fa38d7f96",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "38d211f128c7e310",
+        "56356deed9dd765e",
+        "bb9c2304a9526427",
+        "c723cceb207630d0",
+        "d17103da4b9a4d55"
+      ],
+      "id": "272daa7fa38d7f96",
+      "date": 1389486106747
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "dadb1d9bccf7b8ec"
+      },
+      "id": "dadb1d9bccf7b8ec",
+      "type": "add",
+      "after": "d17103da4b9a4d55",
+      "date": 1389486150029
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "3 (yards) long\n12 (inches) wide\nPRODUCT (square feet)\n"
+      },
+      "date": 1389486238281
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "3 (yards) long\n12 (inches) wide\nPRODUCT (square feet)"
+      },
+      "date": 1389486248096
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "3 (yards) long\n12 (inches) wide\nPRODUCT (square inches)"
+      },
+      "date": 1389486257291
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "3 (yards) long\n12 (inches) wide\nSUM (feet)"
+      },
+      "date": 1389486294664
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "3 (feet) long\n12 (inches) wide\nSUM (yards)"
+      },
+      "date": 1389486312898
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "12 (inches) wide\n3 (feet) long\nSUM (yards)"
+      },
+      "date": 1389486327538
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "72 (inches)\n3 (feet)\nSUM (yards)"
+      },
+      "date": 1389486600807
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "72 (inches)\n3 (yards)\nSUM (feet)"
+      },
+      "date": 1389486613613
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "72 (inches)\n9 (feet)\nSUM (yeard)"
+      },
+      "date": 1389486654069
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "72 (inches)\n9 (feet)\nSUM (yards)"
+      },
+      "date": 1389486663112
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "72 (inches)\n9 (feet)\nSUM (yards) total"
+      },
+      "date": 1389486688726
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "78 (inches)\n9 (feet)\nSUM (yards) total"
+      },
+      "date": 1389486705090
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "80 (inches)\n9 (feet)\nSUM (yards) total"
+      },
+      "date": 1389486721518
+    },
+    {
+      "type": "edit",
+      "id": "dadb1d9bccf7b8ec",
+      "item": {
+        "type": "method",
+        "id": "dadb1d9bccf7b8ec",
+        "text": "90 (inches)\n9 (feet)\nSUM (yards) total"
+      },
+      "date": 1389486727765
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "4968dfe1c5eeef2f",
+        "272daa7fa38d7f96",
+        "dadb1d9bccf7b8ec",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "38d211f128c7e310",
+        "56356deed9dd765e",
+        "bb9c2304a9526427",
+        "c723cceb207630d0",
+        "d17103da4b9a4d55"
+      ],
+      "id": "dadb1d9bccf7b8ec",
+      "date": 1389486751258
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "8519d81d9328a3e1",
+        "text": ""
+      },
+      "id": "8519d81d9328a3e1",
+      "type": "add",
+      "after": "9b5e3d7a7cc65329",
+      "date": 1389486801019
+    },
+    {
+      "type": "edit",
+      "id": "8519d81d9328a3e1",
+      "item": {
+        "type": "paragraph",
+        "id": "8519d81d9328a3e1",
+        "text": "<h3> Units"
+      },
+      "date": 1389486808620
+    },
+    {
+      "type": "edit",
+      "id": "4968dfe1c5eeef2f",
+      "item": {
+        "type": "paragraph",
+        "id": "4968dfe1c5eeef2f",
+        "text": "When the name of a defined value includes parenthesized words, these words are interpreted as units."
+      },
+      "date": 1389486833280
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "8e0f628fb3aef156",
+        "text": ""
+      },
+      "id": "8e0f628fb3aef156",
+      "type": "add",
+      "after": "4968dfe1c5eeef2f",
+      "date": 1389486833787
+    },
+    {
+      "type": "edit",
+      "id": "8e0f628fb3aef156",
+      "item": {
+        "type": "paragraph",
+        "id": "8e0f628fb3aef156",
+        "text": "Some unit conversions can be applied automatically."
+      },
+      "date": 1389486850837
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "8519d81d9328a3e1",
+        "4968dfe1c5eeef2f",
+        "272daa7fa38d7f96",
+        "8e0f628fb3aef156",
+        "dadb1d9bccf7b8ec",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "38d211f128c7e310",
+        "56356deed9dd765e",
+        "bb9c2304a9526427",
+        "c723cceb207630d0",
+        "d17103da4b9a4d55"
+      ],
+      "id": "8e0f628fb3aef156",
+      "date": 1389486855523
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "79c2fa20baa8fe70",
+        "text": ""
+      },
+      "id": "79c2fa20baa8fe70",
+      "type": "add",
+      "after": "8e0f628fb3aef156",
+      "date": 1389486997164
+    },
+    {
+      "type": "edit",
+      "id": "79c2fa20baa8fe70",
+      "item": {
+        "type": "paragraph",
+        "id": "79c2fa20baa8fe70",
+        "text": "See [[Method Unit Conversion]]."
+      },
+      "date": 1389487035963
+    },
+    {
+      "type": "edit",
+      "id": "79c2fa20baa8fe70",
+      "item": {
+        "type": "paragraph",
+        "id": "79c2fa20baa8fe70",
+        "text": "See [[Method Unit Conversions]]."
+      },
+      "date": 1389487047805
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "8519d81d9328a3e1",
+        "4968dfe1c5eeef2f",
+        "272daa7fa38d7f96",
+        "8e0f628fb3aef156",
+        "dadb1d9bccf7b8ec",
+        "79c2fa20baa8fe70",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "38d211f128c7e310",
+        "56356deed9dd765e",
+        "bb9c2304a9526427",
+        "c723cceb207630d0",
+        "d17103da4b9a4d55"
+      ],
+      "id": "79c2fa20baa8fe70",
+      "date": 1389487054032
+    },
+    {
+      "type": "edit",
+      "id": "79c2fa20baa8fe70",
+      "item": {
+        "type": "paragraph",
+        "id": "79c2fa20baa8fe70",
+        "text": "See [[Method Unit Conversions]] for more examples."
+      },
+      "date": 1389487064675
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "efe879fb582668e9",
+        "text": ""
+      },
+      "id": "efe879fb582668e9",
+      "type": "add",
+      "after": "760060c9bbaee23f",
+      "date": 1389487193503
+    },
+    {
+      "type": "edit",
+      "id": "efe879fb582668e9",
+      "item": {
+        "type": "paragraph",
+        "id": "efe879fb582668e9",
+        "text": "Say <b>RATIO</b> to find the ratio of two numbers."
+      },
+      "date": 1389487235124
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "f14032666eff5947",
+        "text": ""
+      },
+      "id": "f14032666eff5947",
+      "type": "add",
+      "after": "efe879fb582668e9",
+      "date": 1389487243952
+    },
+    {
+      "type": "edit",
+      "id": "f14032666eff5947",
+      "item": {
+        "type": "paragraph",
+        "id": "f14032666eff5947",
+        "text": "Say <b>ACCUMULATE</b> to add to a running sum."
+      },
+      "date": 1389487280294
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "3461b41cc070b51a",
+        "text": ""
+      },
+      "id": "3461b41cc070b51a",
+      "type": "add",
+      "after": "38d211f128c7e310",
+      "date": 1389487425143
+    },
+    {
+      "type": "edit",
+      "id": "3461b41cc070b51a",
+      "item": {
+        "type": "paragraph",
+        "id": "3461b41cc070b51a",
+        "text": "See [[Method Expressions]] for a more concise way to write formulas."
+      },
+      "date": 1389487471919
+    },
+    {
+      "type": "edit",
+      "id": "3461b41cc070b51a",
+      "item": {
+        "type": "paragraph",
+        "id": "3461b41cc070b51a",
+        "text": "See [[Method Expressions]] for a concise way to write formulas."
+      },
+      "date": 1389487481895
+    },
+    {
+      "type": "edit",
+      "id": "3461b41cc070b51a",
+      "item": {
+        "type": "paragraph",
+        "id": "3461b41cc070b51a",
+        "text": "See [[Method Expressions]] for concise formulas."
+      },
+      "date": 1389487498819
+    },
+    {
+      "type": "edit",
+      "id": "56356deed9dd765e",
+      "item": {
+        "type": "paragraph",
+        "id": "56356deed9dd765e",
+        "text": "Say <b>SHOW</b> to display specific results while hiding others."
+      },
+      "date": 1389488116519
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "e37cccee0e49821a",
+        "text": "<h3> Programming"
+      },
+      "id": "e37cccee0e49821a",
+      "type": "add",
+      "after": "56356deed9dd765e",
+      "date": 1389488117030
+    },
+    {
+      "type": "edit",
+      "id": "56356deed9dd765e",
+      "item": {
+        "type": "paragraph",
+        "id": "56356deed9dd765e",
+        "text": "Say <b>SHOW</b> to display specific results while hiding others. (SHOW is otherwise like SUM>)"
+      },
+      "date": 1389488228235
+    },
+    {
+      "type": "edit",
+      "id": "56356deed9dd765e",
+      "item": {
+        "type": "paragraph",
+        "id": "56356deed9dd765e",
+        "text": "Say <b>SHOW</b> to display specific results in large digits while hiding other calculatons. (SHOW is otherwise like SUM)"
+      },
+      "date": 1389488276784
+    },
+    {
+      "item": {
+        "type": "factory",
+        "id": "79c19bfe4976f0d2"
+      },
+      "id": "79c19bfe4976f0d2",
+      "type": "add",
+      "after": "d17103da4b9a4d55",
+      "date": 1389488300210
+    },
+    {
+      "type": "edit",
+      "id": "79c19bfe4976f0d2",
+      "item": {
+        "type": "method",
+        "id": "79c19bfe4976f0d2",
+        "text": "650 (miles)\n7.5 (hours)\nRATIO\nSHOW"
+      },
+      "date": 1389488394662
+    },
+    {
+      "type": "edit",
+      "id": "79c19bfe4976f0d2",
+      "item": {
+        "type": "method",
+        "id": "79c19bfe4976f0d2",
+        "text": "650 (miles)\n9.5 (hours)\nRATIO\nSHOW"
+      },
+      "date": 1389488406764
+    },
+    {
+      "type": "edit",
+      "id": "79c19bfe4976f0d2",
+      "item": {
+        "type": "method",
+        "id": "79c19bfe4976f0d2",
+        "text": "650 (miles)\n9.5 (hours)\nRATIO\nSHOW Average Speed"
+      },
+      "date": 1389488421069
+    },
+    {
+      "type": "move",
+      "order": [
+        "df8885c094fc1710",
+        "682d22af9d46f3a5",
+        "cd9bdca1991d8090",
+        "942ad9155083e706",
+        "c6c02f7fae9f4f03",
+        "c5af6f487a7b9907",
+        "bbcc1f9548618bb4",
+        "aec640909082f3b3",
+        "f982813c60a78119",
+        "9b5e3d7a7cc65329",
+        "8519d81d9328a3e1",
+        "4968dfe1c5eeef2f",
+        "272daa7fa38d7f96",
+        "8e0f628fb3aef156",
+        "dadb1d9bccf7b8ec",
+        "79c2fa20baa8fe70",
+        "69084bb462636274",
+        "f3532c800d9b42ba",
+        "0c61adb097e329f2",
+        "641952825d9a9aae",
+        "5072042a5e1ddf59",
+        "760060c9bbaee23f",
+        "efe879fb582668e9",
+        "f14032666eff5947",
+        "38d211f128c7e310",
+        "3461b41cc070b51a",
+        "79c19bfe4976f0d2",
+        "56356deed9dd765e",
+        "e37cccee0e49821a",
+        "bb9c2304a9526427",
+        "c723cceb207630d0",
+        "d17103da4b9a4d55"
+      ],
+      "id": "79c19bfe4976f0d2",
+      "date": 1389488438630
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "2c50f66172992a44",
+        "text": ""
+      },
+      "id": "2c50f66172992a44",
+      "type": "add",
+      "after": "56356deed9dd765e",
+      "date": 1389489631017
+    },
+    {
+      "type": "edit",
+      "id": "2c50f66172992a44",
+      "item": {
+        "type": "paragraph",
+        "id": "2c50f66172992a44",
+        "text": "<h3> Application"
+      },
+      "date": 1389489690999
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "fea9217615c7dda2",
+        "text": ""
+      },
+      "id": "fea9217615c7dda2",
+      "type": "add",
+      "after": "2c50f66172992a44",
+      "date": 1389489691508
+    },
+    {
+      "type": "edit",
+      "id": "fea9217615c7dda2",
+      "item": {
+        "type": "paragraph",
+        "id": "fea9217615c7dda2",
+        "text": "The Method plugin exposes its computations such that they can be applied to new values by other plugins."
+      },
+      "date": 1389489832938
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "36d2fe7c36cc2fcf",
+        "text": ""
+      },
+      "id": "36d2fe7c36cc2fcf",
+      "type": "add",
+      "after": "fea9217615c7dda2",
+      "date": 1389489833446
+    },
+    {
+      "type": "edit",
+      "id": "36d2fe7c36cc2fcf",
+      "item": {
+        "type": "paragraph",
+        "id": "36d2fe7c36cc2fcf",
+        "text": "See [[About Rollup Plugin]] to see how calculations contributing to a dataset can be broken down into Methods on pages and then rolled back up to make a revised dataset."
+      },
+      "date": 1389489921924
+    },
+    {
+      "item": {
+        "type": "paragraph",
+        "id": "31056889cde13ac0",
+        "text": ""
+      },
+      "id": "31056889cde13ac0",
+      "type": "add",
+      "after": "36d2fe7c36cc2fcf",
+      "date": 1389489932817
+    },
+    {
+      "type": "edit",
+      "id": "31056889cde13ac0",
+      "item": {
+        "type": "paragraph",
+        "id": "31056889cde13ac0",
+        "text": "See [[About Reduce Plugin]] to see how calculation on a specified sequence of pages can be treated as a whole and evaluated repeatedly as such."
+      },
+      "date": 1389490086672
+    }
+  ]
+}

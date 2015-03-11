@@ -1,0 +1,75 @@
+{
+  "name": "wiki-plugin-markdown",
+  "version": "0.2.2",
+  "description": "Federated Wiki - Markdown Plugin",
+  "keywords": [
+    "markdown",
+    "wiki",
+    "federated wiki",
+    "plugin"
+  ],
+  "author": {
+    "name": "Ward Cunningham",
+    "email": "ward@c2.com",
+    "url": "http://ward.fed.wiki.org"
+  },
+  "contributors": [],
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "grunt": "~0.4",
+    "grunt-contrib-coffee": "~0.12",
+    "grunt-contrib-watch": "~0.6",
+    "mocha": "*",
+    "expect.js": "*",
+    "grunt-mocha-test": "~0.12",
+    "grunt-git-authors": "~2"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/fedwiki/wiki-plugin-markdown/blob/master/LICENSE.txt"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fedwiki/wiki-plugin-markdown.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fedwiki/wiki-plugin-markdown/issues"
+  },
+  "engines": {
+    "node": "0.10"
+  },
+  "gitHead": "a775d6f5a887c0bd1215cdc1152e2b8c654b2886",
+  "homepage": "https://github.com/fedwiki/wiki-plugin-markdown",
+  "_id": "wiki-plugin-markdown@0.2.2",
+  "_shasum": "7413380488896262bdf23c9d04caec1911afa03d",
+  "_from": "wiki-plugin-markdown@*",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "paul90",
+    "email": "paul.rodwell@btinternet.com"
+  },
+  "maintainers": [
+    {
+      "name": "paul90",
+      "email": "paul.rodwell@btinternet.com"
+    },
+    {
+      "name": "ward",
+      "email": "ward@c2.com"
+    },
+    {
+      "name": "nrn",
+      "email": "nick.niemeir@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "7413380488896262bdf23c9d04caec1911afa03d",
+    "tarball": "http://registry.npmjs.org/wiki-plugin-markdown/-/wiki-plugin-markdown-0.2.2.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/wiki-plugin-markdown/-/wiki-plugin-markdown-0.2.2.tgz"
+}

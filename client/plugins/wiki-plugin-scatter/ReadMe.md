@@ -1,0 +1,5 @@
+# Federated Wiki - Scatter Plugin
+
+
+
+
