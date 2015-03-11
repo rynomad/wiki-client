@@ -34,6 +34,8 @@ state.setUrl = ->
     url = ("/#{locs?[idx] or 'view'}/#{page}" for page, idx in pages).join('')
     unless url is location.hash
       location.hash = url
+      localStorage["#last"] = url
+      history.pushState(url)
 
 state.show = (e) ->
   oldPages = state.pagesInDom()
@@ -41,7 +43,10 @@ state.show = (e) ->
   oldLocs = state.locsInDom()
   newLocs = state.urlLocs()
 
-  return if (!location.hash or location.hash == "/")
+
+  if (!location.hash || location.hash.length <=1)
+    location.hash = localStorage["#last"]
+    return
 
   matching = true
   for name, idx in oldPages
@@ -63,10 +68,9 @@ state.show = (e) ->
   document.title = lineup.bestTitle()
 
 state.first = ->
-  console.log("chromeExtension")
+  state.show()
   firstUrlPages = state.urlPages()
   firstUrlLocs = state.urlLocs()
   oldPages = state.pagesInDom()
-  console.log("first", firstUrlPages, firstUrlLocs)
   for urlPage, idx in firstUrlPages when urlPage not in oldPages
     link.doInternalLink(urlPage, firstUrlLocs[idx]) unless urlPage is ''
