@@ -13,7 +13,7 @@ escape = (s) ->
     .replace(/\//g,'&#x2F;')
 
 # define cachedScript that allows fetching a cached script.
-# see example in http://api.jquery.com/jQuery.getScript/ 
+# see example in http://api.jquery.com/jQuery.getScript/
 
 cachedScript = (url, options) ->
   options = $.extend(options or {},
@@ -24,24 +24,33 @@ cachedScript = (url, options) ->
   $.ajax options
 
 scripts = []
-getScript = plugin.getScript = (url, callback = () ->) ->
-  # console.log "URL :", url, "\nCallback :", callback
+getScript = plugin.getScript = (url, callback, first = true, sites = Object.keys(wiki.neighborhood)) ->
+  callback = callback || () ->
+
+  #console.log "URL :", url, "\nCallback :", callback
+
   if url in scripts
     callback()
-  else 
+  else if first || sites.length
     cachedScript(url)
       .done ->
         scripts.push url
         callback()
       .fail ->
         callback()
+  else
+    callback()
 
 plugin.get = plugin.getPlugin = (name, callback) ->
   return callback(window.plugins[name]) if window.plugins[name]
-  getScript "/plugins/#{name}/#{name}.js", () ->
-    return callback(window.plugins[name]) if window.plugins[name]
-    getScript "/plugins/#{name}.js", () ->
+  if location.protocol == "chrome-extension:"
+    getScript "/plugins/wiki-plugin-#{name}/client/#{name}.js", () ->
       callback(window.plugins[name])
+  else
+    getScript "/plugins/#{name}/#{name}.js", () ->
+      return callback(window.plugins[name]) if window.plugins[name]
+      getScript "/plugins/#{name}.js", () ->
+        callback(window.plugins[name])
 
 plugin.do = plugin.doPlugin = (div, item, done=->) ->
   error = (ex, script) ->
@@ -94,11 +103,9 @@ plugin.do = plugin.doPlugin = (div, item, done=->) ->
         script.bind div, item
         done()
     catch err
-      console.log 'plugin error', err
+      console.log 'plugin error', err, div
       error(err, script)
       done()
 
 plugin.registerPlugin = (pluginName,pluginFn)->
   window.plugins[pluginName] = pluginFn($)
-
-
