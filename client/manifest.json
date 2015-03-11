@@ -25,10 +25,22 @@
       "plugins/wiki-plugin-*/client/*.js",
       "node_modules/wiki-client/client/*.*"
     ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 	"app": {
 	  "launch": {
 	    "local_path": "index.html"
 	  }
 	},
+	"content_scripts":[
+	  {
+        "matches": ["http://*/*"],
+        "js":[
+          "chrome/checkWiki.js"
+        ]
+      }
+    ],
+    "background": {
+      "scripts":["chrome/bootStrap.js"]
+    },
     "offline_enabled": true
 }
